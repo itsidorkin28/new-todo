@@ -1,23 +1,26 @@
 import React from 'react'
-import {Button} from '../../components'
-import {TodoProps} from './Todo.props'
+import { AddForm, Button, Title } from '../../components'
+import { TodoProps } from './Todo.props'
 import styles from './Todo.module.scss'
 import cn from 'classnames'
 
-export const Todo = ({title, className, ...props}: TodoProps): JSX.Element => {
+export const Todo = ({ title, data, className, ...props }: TodoProps): JSX.Element => {
+	const tasksList = data.map(el => {
+		return <li key={el.id}>
+			<input type='checkbox' checked={el.isDone} />{el.title}
+			<Button appearance={'primary'}>x</Button>
+		</li>
+	})
 	return <div className={cn(styles.todo, className)} {...props}>
-		<h1>{title}</h1>
-		<input type='text'/>
-		<button>+</button>
+		<Title tag={'h2'}>{title}</Title>
+		<AddForm/>
 		<ul>
-			<li><input type='checkbox' checked={true}/>1</li>
-			<li><input type='checkbox' checked={true}/>2</li>
-			<li><input type='checkbox' checked={false}/>3</li>
+			{tasksList}
 		</ul>
 		<div>
-			<Button>All</Button>
-			<Button>Active</Button>
-			<Button>Complete</Button>
+			<Button appearance={'ghost'}>All</Button>
+			<Button appearance={'ghost'}>Active</Button>
+			<Button appearance={'ghost'}>Complete</Button>
 		</div>
 	</div>
 }
