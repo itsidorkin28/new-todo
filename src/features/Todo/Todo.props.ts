@@ -1,6 +1,6 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import { ITask } from '../../store/reducers/tasks.reducer'
-import { FilterType } from '../../store/reducers/todos.reducer'
+import { ITask } from '../../store/reducers/tasks-reducer'
+import { FilterType } from '../../store/reducers/todos-reducer'
 
 export interface TodoProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     todoId: string

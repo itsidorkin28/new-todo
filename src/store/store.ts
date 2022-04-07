@@ -1,6 +1,6 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux'
-import { TodosActionsType, todosReducer } from './reducers/todos.reducer'
-import { TasksActionsType, tasksReducer } from './reducers/tasks.reducer'
+import { TodosActionsType, todosReducer } from './reducers/todos-reducer'
+import { TasksActionsType, tasksReducer } from './reducers/tasks-reducer'
 import thunkMiddleware, {ThunkAction} from 'redux-thunk'
 
 const rootReducer = combineReducers({

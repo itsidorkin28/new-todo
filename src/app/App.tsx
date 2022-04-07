@@ -3,14 +3,14 @@ import { Todo } from '../features'
 import { AddForm } from '../components'
 import { withLayout } from '../layout'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTaskAC, changeTaskStatusAC, changeTaskTitleAC, ITasks, removeTaskAC } from '../store/reducers/tasks.reducer'
+import { addTaskAC, changeTaskStatusAC, changeTaskTitleAC, ITasks, removeTaskAC } from '../store/reducers/tasks-reducer'
 import {
     addTodoAC,
     changeTodoTitleAC,
     FilterType, ITodo,
     removeTodoAC,
     setTodoFilterAC,
-} from '../store/reducers/todos.reducer'
+} from '../store/reducers/todos-reducer'
 import { RootStateType } from '../store/store'
 import { v1 } from 'uuid'
 
@@ -31,7 +31,7 @@ function App() {
         title,
     }))
     const removeTask = (todoId: string, taskId: string) => dispatch(removeTaskAC({ todoId, taskId }))
-    const addTask = (todoId: string, title: string) => dispatch(addTaskAC({ todoId, title }))
+    const addTask = (todoId: string, title: string) => dispatch(addTaskAC({ todoId, taskId: v1(), title }))
 
     const changeTodoTitle = (todoId: string, title: string) => dispatch(changeTodoTitleAC({ todoId, title }))
     const removeTodo = (todoId: string) => dispatch(removeTodoAC({ todoId }))

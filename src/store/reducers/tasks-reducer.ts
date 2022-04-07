@@ -1,5 +1,4 @@
-import { v1 } from 'uuid'
-import { addTodoAC, removeTodoAC, todoId_1, todoId_2, TODOS_ACTIONS } from './todos.reducer'
+import { addTodoAC, removeTodoAC, TODOS_ACTIONS } from './todos-reducer'
 
 export interface ITask {
     id: string
@@ -34,7 +33,7 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
             return {
                 ...state,
                 [action.todoId]: [{
-                    id: v1(),
+                    id: action.taskId,
                     title: action.title,
                     isDone: false,
                 }, ...state[action.todoId]],
@@ -72,8 +71,8 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
     }
 }
 
-export const addTaskAC = (payload: { todoId: string, title: string }) => {
-    return { type: TASKS_ACTIONS.ADD_TASK, todoId: payload.todoId, title: payload.title  } as const
+export const addTaskAC = (payload: { todoId: string, taskId: string, title: string }) => {
+    return { type: TASKS_ACTIONS.ADD_TASK, todoId: payload.todoId, taskId: payload.taskId, title: payload.title  } as const
 }
 export const removeTaskAC = (payload: { todoId: string, taskId: string }) => {
     return { type: TASKS_ACTIONS.REMOVE_TASK, todoId: payload.todoId, taskId: payload.taskId } as const

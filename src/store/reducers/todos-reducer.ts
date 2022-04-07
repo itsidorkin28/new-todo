@@ -1,5 +1,3 @@
-import { v1 } from 'uuid'
-
 export type FilterType = 'all' | 'active' | 'completed'
 
 export interface ITodo {
@@ -21,8 +19,6 @@ export type TodosActionsType =
     | ReturnType<typeof setTodoFilterAC>
     | ReturnType<typeof addTodoAC>
 
-export const todoId_1 = v1()
-export const todoId_2 = v1()
 const initialState: Array<ITodo> = []
 
 export const todosReducer = (state: Array<ITodo> = initialState, action: TodosActionsType): Array<ITodo> => {
