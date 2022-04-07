@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddForm, Button, Title } from '../../components'
+import { AddForm, Button, EditableSpan, Title } from '../../components'
 import { TodoProps } from './Todo.props'
 import styles from './Todo.module.scss'
 import cn from 'classnames'
@@ -14,12 +14,15 @@ export const Todo = ({
                          removeTodo,
                          addTask,
                          filter,
-                         changeStatusCheckbox,
+                         changeTaskStatus,
+                         changeTodoTitle,
+                         changeTaskTitle,
                          ...props
                      }: TodoProps): JSX.Element => {
     console.log('Todo render')
     const tasksListJSX = tasksList.map(el => {
-        const onChangeHandle = (e: React.ChangeEvent<HTMLInputElement>) => changeStatusCheckbox(todoId, el.id, e.currentTarget.checked)
+        const onChangeHandle = (e: React.ChangeEvent<HTMLInputElement>) => changeTaskStatus(todoId, el.id, e.currentTarget.checked)
+        const changeTaskTitleHandle = (title: string) => changeTaskTitle(todoId, el.id, title)
         return <li
             key={el.id}
             className={cn({
@@ -27,17 +30,20 @@ export const Todo = ({
             })}>
             <input type='checkbox' checked={el.isDone} onChange={onChangeHandle} />
             <span>
-                {el.title}
+                 <EditableSpan title={el.title} changeTitle={changeTaskTitleHandle} />
             </span>
             <Button appearance={'ghost'} onClick={() => removeTask(todoId, el.id)}>x</Button>
         </li>
     })
 
     const createTask = (title: string) => addTask(todoId, title)
+    const changeTodoTitleHandle = (title: string) => changeTodoTitle(todoId, title)
 
     return <div className={cn(styles.todo, className)} {...props}>
         <Button appearance={'ghost'} onClick={() => removeTodo(todoId)}>x</Button>
-        <Title tag={'h2'}>{title}</Title>
+        <Title tag={'h2'}>
+            <EditableSpan title={title} changeTitle={changeTodoTitleHandle} />
+        </Title>
         <AddForm onCreate={createTask} />
         <ul>
             {tasksListJSX}

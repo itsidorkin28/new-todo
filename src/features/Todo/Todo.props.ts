@@ -7,9 +7,11 @@ export interface TodoProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivEleme
     removeTask: (todoId: string, taskId: string) => void
     addTask: (todoId: string, title: string) => void
     filter: FilterType
-    changeStatusCheckbox: (todoId: string, taskId: string, isDone: boolean) => void
+    changeTaskStatus: (todoId: string, taskId: string, isDone: boolean) => void
     removeTodo: (todoId: string) => void
     setTodoFilter: (todoId: string, filter: FilterType) => void
+    changeTodoTitle: (todoId: string, title: string) => void
+    changeTaskTitle: (todoId: string, taskId: string, title: string) => void
 }
 
 export interface ITask {

@@ -30,10 +30,17 @@ function App() {
         ...el,
         filter,
     } : el))
-    const changeStatusCheckbox = (todoId: string, taskId: string, isDone: boolean) => setTasks({
+    const changeTaskStatus = (todoId: string, taskId: string, isDone: boolean) => setTasks({
         ...tasks,
         [todoId]: tasks[todoId].map(el => el.id === taskId ? { ...el, isDone } : el),
     })
+    const changeTaskTitle = (todoId: string, taskId: string, title: string) => setTasks({
+        ...tasks,
+        [todoId]: tasks[todoId].map(el => el.id === taskId ? { ...el, title } : el),
+    })
+    const changeTodoTitle = (todoId: string, title: string) => setTodos(
+        todos.map(el => el.id === todoId ? { ...el, title } : el),
+    )
     const removeTask = (todoId: string, taskId: string) => setTasks({
         ...tasks,
         [todoId]: tasks[todoId].filter(el => el.id !== taskId),
@@ -77,9 +84,11 @@ function App() {
                         tasksList={tasksList}
                         removeTask={removeTask}
                         addTask={addTask}
+                        changeTaskTitle={changeTaskTitle}
+                        changeTodoTitle={changeTodoTitle}
                         setTodoFilter={setTodoFilter}
                         filter={el.filter}
-                        changeStatusCheckbox={changeStatusCheckbox}
+                        changeTaskStatus={changeTaskStatus}
                     />
                 )
             })}
