@@ -3,6 +3,7 @@ import { Todo } from '../features'
 import { v1 } from 'uuid'
 import { FilterType, ITasks, ITodo } from '../features/Todo/Todo.props'
 import { AddForm } from '../components'
+import { withLayout } from '../layout'
 
 function App() {
     const todoId_1 = v1()
@@ -60,40 +61,38 @@ function App() {
         setTodos([{ id: newTodoId, title, filter: 'all' }, ...todos])
         setTasks({ ...tasks, [newTodoId]: [] })
     }
-    return (
-        <div>
-            <AddForm onCreate={addTodo} />
-            {todos.map(el => {
-                let tasksList
-                switch (el.filter) {
-                    case 'active':
-                        tasksList = tasks[el.id].filter(el => !el.isDone)
-                        break
-                    case 'completed':
-                        tasksList = tasks[el.id].filter(el => el.isDone)
-                        break
-                    default:
-                        tasksList = tasks[el.id]
-                }
-                return (
-                    <Todo
-                        key={el.id}
-                        todoId={el.id}
-                        title={el.title}
-                        removeTodo={removeTodo}
-                        tasksList={tasksList}
-                        removeTask={removeTask}
-                        addTask={addTask}
-                        changeTaskTitle={changeTaskTitle}
-                        changeTodoTitle={changeTodoTitle}
-                        setTodoFilter={setTodoFilter}
-                        filter={el.filter}
-                        changeTaskStatus={changeTaskStatus}
-                    />
-                )
-            })}
-        </div>
-    )
+    return <>
+        <AddForm onCreate={addTodo} />
+        {todos.map(el => {
+            let tasksList
+            switch (el.filter) {
+                case 'active':
+                    tasksList = tasks[el.id].filter(el => !el.isDone)
+                    break
+                case 'completed':
+                    tasksList = tasks[el.id].filter(el => el.isDone)
+                    break
+                default:
+                    tasksList = tasks[el.id]
+            }
+            return (
+                <Todo
+                    key={el.id}
+                    todoId={el.id}
+                    title={el.title}
+                    removeTodo={removeTodo}
+                    tasksList={tasksList}
+                    removeTask={removeTask}
+                    addTask={addTask}
+                    changeTaskTitle={changeTaskTitle}
+                    changeTodoTitle={changeTodoTitle}
+                    setTodoFilter={setTodoFilter}
+                    filter={el.filter}
+                    changeTaskStatus={changeTaskStatus}
+                />
+            )
+        })}
+    </>
 }
 
-export default App
+export default withLayout(App)

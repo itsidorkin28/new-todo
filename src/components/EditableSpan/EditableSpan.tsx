@@ -16,7 +16,7 @@ export const EditableSpan = ({ title, className, changeTitle, ...props }: Editab
         changeTitle(value)
     }
     const onChangeHandle = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)
-    return <div className={cn(styles.editableSpan, className)} {...props}>
+    return <div className={cn(styles.editable, className)} {...props}>
         {editMode
             ? <input type='text' value={value} onBlur={offEditMode} autoFocus onChange={onChangeHandle} />
             : <span onDoubleClick={onEditMode}>{title}</span>}
