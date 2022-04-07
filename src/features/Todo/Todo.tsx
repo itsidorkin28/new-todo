@@ -11,6 +11,7 @@ export const Todo = ({
                          className,
                          setTodoFilter,
                          removeTask,
+                         removeTodo,
                          addTask,
                          filter,
                          changeStatusCheckbox,
@@ -26,13 +27,15 @@ export const Todo = ({
         </li>
     })
     return <div className={cn(styles.todo, className)} {...props}>
+        <Button appearance={'ghost'} onClick={() => removeTodo(todoId)}>x</Button>
         <Title tag={'h2'}>{title}</Title>
         <AddForm onCreate={addTask} todoId={todoId} />
         <ul>
             {tasksListJSX}
         </ul>
         <div>
-            <Button appearance={filter === 'all' ? 'primary' : 'ghost'} onClick={() => setTodoFilter(todoId, 'all')}>All</Button>
+            <Button appearance={filter === 'all' ? 'primary' : 'ghost'}
+                    onClick={() => setTodoFilter(todoId, 'all')}>All</Button>
             <Button appearance={filter === 'active' ? 'primary' : 'ghost'}
                     onClick={() => setTodoFilter(todoId, 'active')}>Active</Button>
             <Button appearance={filter === 'completed' ? 'primary' : 'ghost'}
