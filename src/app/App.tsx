@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Todo } from '../features'
 import { v1 } from 'uuid'
 import { FilterType, ITasks, ITodo } from '../features/Todo/Todo.props'
+import { AddForm } from '../components'
 
 function App() {
     const todoId_1 = v1()
@@ -47,8 +48,14 @@ function App() {
         ...tasks,
         [todoId]: [{ id: v1(), title, isDone: false }, ...tasks[todoId]],
     })
+    const addTodo = (title: string) => {
+        const newTodoId = v1()
+        setTodos([{ id: newTodoId, title, filter: 'all' }, ...todos])
+        setTasks({ ...tasks, [newTodoId]: [] })
+    }
     return (
         <div>
+            <AddForm onCreate={addTodo} />
             {todos.map(el => {
                 let tasksList
                 switch (el.filter) {

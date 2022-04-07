@@ -20,16 +20,25 @@ export const Todo = ({
     console.log('Todo render')
     const tasksListJSX = tasksList.map(el => {
         const onChangeHandle = (e: React.ChangeEvent<HTMLInputElement>) => changeStatusCheckbox(todoId, el.id, e.currentTarget.checked)
-        return <li key={el.id}>
+        return <li
+            key={el.id}
+            className={cn({
+                [styles.completed]: el.isDone,
+            })}>
             <input type='checkbox' checked={el.isDone} onChange={onChangeHandle} />
-            <span>{el.title}</span>
+            <span>
+                {el.title}
+            </span>
             <Button appearance={'ghost'} onClick={() => removeTask(todoId, el.id)}>x</Button>
         </li>
     })
+
+    const createTask = (title: string) => addTask(todoId, title)
+
     return <div className={cn(styles.todo, className)} {...props}>
         <Button appearance={'ghost'} onClick={() => removeTodo(todoId)}>x</Button>
         <Title tag={'h2'}>{title}</Title>
-        <AddForm onCreate={addTask} todoId={todoId} />
+        <AddForm onCreate={createTask} />
         <ul>
             {tasksListJSX}
         </ul>
