@@ -3,11 +3,15 @@ import './global.scss'
 import App from './app/App'
 import reportWebVitals from './reportWebVitals'
 import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { store } from './store/store'
 
 const element = <>
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>
+    <React.StrictMode>
+        <Provider store={store}>
+            <App />
+        </Provider>
+    </React.StrictMode>
 </>
 const root = createRoot(document.getElementById('root') as Element)
 root.render(element)

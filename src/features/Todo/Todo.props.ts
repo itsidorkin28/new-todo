@@ -1,4 +1,6 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
+import { ITask } from '../../store/reducers/tasks.reducer'
+import { FilterType } from '../../store/reducers/todos.reducer'
 
 export interface TodoProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     todoId: string
@@ -14,20 +16,4 @@ export interface TodoProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivEleme
     changeTaskTitle: (todoId: string, taskId: string, title: string) => void
 }
 
-export interface ITask {
-    id: string
-    title: string
-    isDone: boolean
-}
 
-export type FilterType = 'all' | 'active' | 'completed'
-
-export interface ITodo {
-    id: string
-    title: string
-    filter: FilterType
-}
-
-export interface ITasks {
-    [todolistId: string]: Array<ITask>
-}

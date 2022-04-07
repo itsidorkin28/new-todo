@@ -32,7 +32,9 @@ export const Todo = ({
             <span>
                  <EditableSpan title={el.title} changeTitle={changeTaskTitleHandle} />
             </span>
-            <Button appearance={'ghost'} onClick={() => removeTask(todoId, el.id)}>x</Button>
+            <Button appearance={'ghost'} onClick={() => removeTask(todoId, el.id)} round={true}>
+                x
+            </Button>
         </li>
     })
 
@@ -40,7 +42,9 @@ export const Todo = ({
     const changeTodoTitleHandle = (title: string) => changeTodoTitle(todoId, title)
 
     return <div className={cn(styles.todo, className)} {...props}>
-        <Button appearance={'ghost'} onClick={() => removeTodo(todoId)}>x</Button>
+        <Button appearance={'ghost'} onClick={() => removeTodo(todoId)} round={true}>
+            x
+        </Button>
         <Title tag={'h2'}>
             <EditableSpan title={title} changeTitle={changeTodoTitleHandle} />
         </Title>

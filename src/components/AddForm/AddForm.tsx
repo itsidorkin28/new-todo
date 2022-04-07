@@ -10,7 +10,9 @@ export const AddForm = ({ className, onCreate, ...props }: AddFormProps): JSX.El
     const onChangeHandle = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)
     return <div className={cn(styles.form, className)} {...props}>
         <input type='text' value={value} onChange={onChangeHandle} />
-        <Button appearance={'ghost'} onClick={() => onCreate(value)}>+</Button>
+        <Button appearance={'ghost'} onClick={() => onCreate(value)} round={true}>
+            +
+        </Button>
     </div>
 }
 

@@ -1,66 +1,43 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Todo } from '../features'
-import { v1 } from 'uuid'
-import { FilterType, ITasks, ITodo } from '../features/Todo/Todo.props'
 import { AddForm } from '../components'
 import { withLayout } from '../layout'
+import { useDispatch, useSelector } from 'react-redux'
+import { addTaskAC, changeTaskStatusAC, changeTaskTitleAC, ITasks, removeTaskAC } from '../store/reducers/tasks.reducer'
+import {
+    addTodoAC,
+    changeTodoTitleAC,
+    FilterType, ITodo,
+    removeTodoAC,
+    setTodoFilterAC,
+} from '../store/reducers/todos.reducer'
+import { RootStateType } from '../store/store'
+import { v1 } from 'uuid'
 
 function App() {
-    const todoId_1 = v1()
-    const todoId_2 = v1()
+    const dispatch = useDispatch()
 
-    const [todos, setTodos] = useState<Array<ITodo>>([
-        { id: todoId_1, title: 'The first', filter: 'all' },
-        { id: todoId_2, title: 'The second', filter: 'all' },
-    ])
-    const [tasks, setTasks] = useState<ITasks>({
-        [todoId_1]: [
-            { id: v1(), title: 'JS', isDone: true },
-            { id: v1(), title: 'JS', isDone: false },
-            { id: v1(), title: 'JS', isDone: false },
-        ],
-        [todoId_2]: [
-            { id: v1(), title: 'CSS', isDone: true },
-            { id: v1(), title: 'CSS', isDone: false },
-            { id: v1(), title: 'CSS', isDone: false },
-        ],
-    })
+    const todos = useSelector<RootStateType, Array<ITodo>>(state => state.todos)
+    const tasks = useSelector<RootStateType, ITasks>(state => state.tasks)
 
+    const changeTaskStatus = (todoId: string, taskId: string, isDone: boolean) => dispatch(changeTaskStatusAC({
+        todoId,
+        taskId,
+        isDone,
+    }))
+    const changeTaskTitle = (todoId: string, taskId: string, title: string) => dispatch(changeTaskTitleAC({
+        todoId,
+        taskId,
+        title,
+    }))
+    const removeTask = (todoId: string, taskId: string) => dispatch(removeTaskAC({ todoId, taskId }))
+    const addTask = (todoId: string, title: string) => dispatch(addTaskAC({ todoId, title }))
 
-    const setTodoFilter = (todoId: string, filter: FilterType) => setTodos(todos.map(el => el.id === todoId ? {
-        ...el,
-        filter,
-    } : el))
-    const changeTaskStatus = (todoId: string, taskId: string, isDone: boolean) => setTasks({
-        ...tasks,
-        [todoId]: tasks[todoId].map(el => el.id === taskId ? { ...el, isDone } : el),
-    })
-    const changeTaskTitle = (todoId: string, taskId: string, title: string) => setTasks({
-        ...tasks,
-        [todoId]: tasks[todoId].map(el => el.id === taskId ? { ...el, title } : el),
-    })
-    const changeTodoTitle = (todoId: string, title: string) => setTodos(
-        todos.map(el => el.id === todoId ? { ...el, title } : el),
-    )
-    const removeTask = (todoId: string, taskId: string) => setTasks({
-        ...tasks,
-        [todoId]: tasks[todoId].filter(el => el.id !== taskId),
-    })
-    const removeTodo = (todoId: string) => {
-        setTodos(todos.filter(el => el.id !== todoId))
-        const tasksCopy = { ...tasks }
-        delete tasksCopy[todoId]
-        setTasks(tasksCopy)
-    }
-    const addTask = (todoId: string, title: string) => setTasks({
-        ...tasks,
-        [todoId]: [{ id: v1(), title, isDone: false }, ...tasks[todoId]],
-    })
-    const addTodo = (title: string) => {
-        const newTodoId = v1()
-        setTodos([{ id: newTodoId, title, filter: 'all' }, ...todos])
-        setTasks({ ...tasks, [newTodoId]: [] })
-    }
+    const changeTodoTitle = (todoId: string, title: string) => dispatch(changeTodoTitleAC({ todoId, title }))
+    const removeTodo = (todoId: string) => dispatch(removeTodoAC({ todoId }))
+    const setTodoFilter = (todoId: string, filter: FilterType) => dispatch(setTodoFilterAC({ todoId, filter }))
+    const addTodo = (title: string) => dispatch(addTodoAC({ todoId: v1(), title }))
+
     return <>
         <AddForm onCreate={addTodo} />
         {todos.map(el => {
