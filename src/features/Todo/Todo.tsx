@@ -3,6 +3,7 @@ import { AddForm, Button, EditableSpan, Title } from '../../components'
 import { TodoProps } from './Todo.props'
 import styles from './Todo.module.scss'
 import cn from 'classnames'
+import { Task } from '../Task/Task'
 
 export const Todo = ({
                          todoId,
@@ -21,21 +22,14 @@ export const Todo = ({
                      }: TodoProps): JSX.Element => {
     console.log('Todo render')
     const tasksListJSX = tasksList.map(el => {
-        const onChangeHandle = (e: React.ChangeEvent<HTMLInputElement>) => changeTaskStatus(todoId, el.id, e.currentTarget.checked)
-        const changeTaskTitleHandle = (title: string) => changeTaskTitle(todoId, el.id, title)
-        return <li
-            key={el.id}
-            className={cn({
-                [styles.completed]: el.isDone,
-            })}>
-            <input type='checkbox' checked={el.isDone} onChange={onChangeHandle} />
-            <span>
-                 <EditableSpan title={el.title} changeTitle={changeTaskTitleHandle} />
-            </span>
-            <Button appearance={'ghost'} onClick={() => removeTask(todoId, el.id)} round={true}>
-                x
-            </Button>
-        </li>
+        const onChangeCheckboxHandle = (taskId: string, isDone: boolean) => changeTaskStatus(todoId, taskId, isDone)
+        const changeTaskTitleHandle = (taskId: string, title: string) => changeTaskTitle(todoId, taskId, title)
+        const removeTaskHandle = (taskId: string) => removeTask(todoId, taskId)
+        return <Task key={el.id}
+                     task={el} removeTask={removeTaskHandle}
+                     changeTaskTitle={changeTaskTitleHandle}
+                     onChangeCheckbox={onChangeCheckboxHandle} />
+
     })
 
     const createTask = (title: string) => addTask(todoId, title)
@@ -45,7 +39,7 @@ export const Todo = ({
         <Button appearance={'ghost'} onClick={() => removeTodo(todoId)} round={true}>
             x
         </Button>
-        <Title tag={'h2'}>
+        <Title tag={'h3'}>
             <EditableSpan title={title} changeTitle={changeTodoTitleHandle} />
         </Title>
         <AddForm onCreate={createTask} />

@@ -7,7 +7,7 @@ export interface ITask {
 }
 
 export interface ITasks {
-    [todolistId: string]: Array<ITask>
+    [todoId: string]: Array<ITask>
 }
 
 export enum TASKS_ACTIONS {
