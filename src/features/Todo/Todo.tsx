@@ -1,30 +1,36 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { AddForm, Button, EditableSpan, Title } from '../../components'
 import { TodoProps } from './Todo.props'
 import styles from './Todo.module.scss'
 import cn from 'classnames'
 import { Task } from '../Task/Task'
+import { FilterType } from '../../store/reducers/todos-reducer'
 
-export const Todo = ({
-                         todoId,
-                         title,
-                         tasksList,
-                         className,
-                         setTodoFilter,
-                         removeTask,
-                         removeTodo,
-                         addTask,
-                         filter,
-                         changeTaskStatus,
-                         changeTodoTitle,
-                         changeTaskTitle,
-                         ...props
-                     }: TodoProps): JSX.Element => {
-    console.log('Todo render')
+export const Todo = React.memo(({
+                                    todoId,
+                                    title,
+                                    tasksList,
+                                    className,
+                                    setTodoFilter,
+                                    removeTask,
+                                    removeTodo,
+                                    addTask,
+                                    filter,
+                                    changeTaskStatus,
+                                    changeTodoTitle,
+                                    changeTaskTitle,
+                                    ...props
+                                }: TodoProps): JSX.Element => {
+    const onChangeCheckboxHandle =  useCallback((taskId: string, isDone: boolean) => {
+        changeTaskStatus(todoId, taskId, isDone)
+    }, [changeTaskStatus, todoId])
+    const changeTaskTitleHandle =  useCallback((taskId: string, title: string) => {
+        changeTaskTitle(todoId, taskId, title)
+    }, [changeTaskTitle, todoId])
+    const removeTaskHandle = useCallback((taskId: string) => {
+        removeTask(todoId, taskId)
+    }, [removeTask, todoId])
     const tasksListJSX = tasksList.map(el => {
-        const onChangeCheckboxHandle = (taskId: string, isDone: boolean) => changeTaskStatus(todoId, taskId, isDone)
-        const changeTaskTitleHandle = (taskId: string, title: string) => changeTaskTitle(todoId, taskId, title)
-        const removeTaskHandle = (taskId: string) => removeTask(todoId, taskId)
         return <Task key={el.id}
                      task={el} removeTask={removeTaskHandle}
                      changeTaskTitle={changeTaskTitleHandle}
@@ -32,11 +38,20 @@ export const Todo = ({
 
     })
 
-    const createTask = (title: string) => addTask(todoId, title)
-    const changeTodoTitleHandle = (title: string) => changeTodoTitle(todoId, title)
-
+    const createTask = useCallback((title: string) => {
+        addTask(todoId, title)
+    }, [addTask, todoId])
+    const changeTodoTitleHandle = useCallback((title: string) => {
+        changeTodoTitle(todoId, title)
+    }, [changeTodoTitle, todoId])
+    const setTodoFilterHandle =  useCallback((filter: FilterType) => {
+        setTodoFilter(todoId, filter)
+    }, [setTodoFilter, todoId])
+    const removeTodoHandle = useCallback(() => {
+        removeTodo(todoId)
+    }, [removeTodo, todoId])
     return <div className={cn(styles.todo, className)} {...props}>
-        <Button appearance={'ghost'} onClick={() => removeTodo(todoId)} round={true}>
+        <Button appearance={'ghost'} onClick={removeTodoHandle} round={true}>
             x
         </Button>
         <Title tag={'h3'}>
@@ -48,14 +63,14 @@ export const Todo = ({
         </ul>
         <div>
             <Button appearance={filter === 'all' ? 'primary' : 'ghost'}
-                    onClick={() => setTodoFilter(todoId, 'all')}>All</Button>
+                    onClick={() => setTodoFilterHandle('all')}>All</Button>
             <Button appearance={filter === 'active' ? 'primary' : 'ghost'}
-                    onClick={() => setTodoFilter(todoId, 'active')}>Active</Button>
+                    onClick={() => setTodoFilterHandle('active')}>Active</Button>
             <Button appearance={filter === 'completed' ? 'primary' : 'ghost'}
-                    onClick={() => setTodoFilter(todoId, 'completed')}>Complete</Button>
+                    onClick={() => setTodoFilterHandle('completed')}>Complete</Button>
         </div>
     </div>
-}
+})
 
 
 

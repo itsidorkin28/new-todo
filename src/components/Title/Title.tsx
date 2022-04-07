@@ -2,7 +2,7 @@ import React from 'react'
 import { TitleProps } from './Title.props'
 import styles from './Title.module.scss'
 
-export const Title = ({children, tag}: TitleProps): JSX.Element => {
+export const Title = React.memo(({children, tag}: TitleProps): JSX.Element => {
 	switch (tag) {
 		case 'h1':
 			return <h1 className={styles.h1}>{children}</h1>
@@ -13,7 +13,7 @@ export const Title = ({children, tag}: TitleProps): JSX.Element => {
 		default:
 			return <></>
 	}
-}
+})
 
 
 

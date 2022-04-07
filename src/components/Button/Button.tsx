@@ -3,7 +3,8 @@ import { ButtonProps } from './Button.props'
 import cn from 'classnames'
 import styles from './Button.module.scss'
 
-export const Button = ({ children, className, appearance, round = false, ...props }: ButtonProps): JSX.Element => {
+export const Button = React.memo(({ children, className, appearance, round = false, ...props }: ButtonProps): JSX.Element => {
+    console.log('btn')
     return <>
         <button
             className={cn(styles.button, className, {
@@ -17,5 +18,5 @@ export const Button = ({ children, className, appearance, round = false, ...prop
         </button>
     </>
 
-}
+})
 
