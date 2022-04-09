@@ -4,7 +4,6 @@ import cn from 'classnames'
 import styles from './Button.module.scss'
 
 export const Button = React.memo(({ children, className, appearance, round = false, ...props }: ButtonProps): JSX.Element => {
-    console.log('btn')
     return <>
         <button
             className={cn(styles.button, className, {

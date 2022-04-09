@@ -5,6 +5,7 @@ import styles from './Task.module.scss'
 import { Button, EditableSpan } from '../../components'
 
 export const Task = React.memo(({task, removeTask, changeTaskTitle, onChangeCheckbox, ...props}: TaskProps): JSX.Element => {
+    console.log('task')
     const {id, title, isDone} = task
     const onChangeCheckboxHandle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         onChangeCheckbox(id, e.currentTarget.checked)
