@@ -2,16 +2,13 @@ import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootStateType } from '../../store/store'
 import {
-    changeTodoTitleAC,
     FilterType,
     TodoDomainType,
-    removeTodoAC,
-    setTodoFilterAC, fetchTodosThunk, addTodoThunk,
+    setTodoFilterAC, fetchTodosThunk, addTodoThunk, deleteTodoThunk, updateTodoTitleThunk,
 } from '../../store/reducers/todos-reducer'
 import {
     addTaskThunk,
-    changeTaskTitleAC,
-    removeTaskAC, TaskDomainType, updateTaskStatusThunk,
+    removeTaskAC, TaskDomainType, updateTaskStatusThunk, updateTaskTitleThunk,
 } from '../../store/reducers/tasks-reducer'
 import { AddForm, Title } from '../../components'
 import { Todo } from '../Todo/Todo'
@@ -32,7 +29,7 @@ export const Todos = (): JSX.Element => {
         dispatch(updateTaskStatusThunk({ todoId, taskId, status }))
     }, [dispatch])
     const changeTaskTitle = useCallback((todoId: string, taskId: string, title: string) => {
-        dispatch(changeTaskTitleAC({ todoId, taskId, title }))
+        dispatch(updateTaskTitleThunk({ todoId, taskId, title }))
     }, [dispatch])
     const removeTask = useCallback((todoId: string, taskId: string) => {
         dispatch(removeTaskAC({ todoId, taskId }))
@@ -40,11 +37,12 @@ export const Todos = (): JSX.Element => {
     const addTask = useCallback((todoId: string, title: string) => {
         dispatch(addTaskThunk({ todoId, title }))
     }, [dispatch])
+
     const changeTodoTitle = useCallback((todoId: string, title: string) => {
-        dispatch(changeTodoTitleAC({ todoId, title }))
+        dispatch(updateTodoTitleThunk({ todoId, title }))
     }, [dispatch])
     const removeTodo = useCallback((todoId: string) => {
-        dispatch(removeTodoAC({ todoId }))
+        dispatch(deleteTodoThunk({ todoId }))
     }, [dispatch])
     const setTodoFilter = useCallback((todoId: string, filter: FilterType) => {
         dispatch(setTodoFilterAC({ todoId, filter }))

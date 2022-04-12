@@ -80,3 +80,23 @@ export const addTodoThunk = (payload: { title: string }): ThunkActionType => dis
             console.log(error.message)
         })
 }
+
+export const deleteTodoThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
+    todosApi.deleteTodo(payload)
+        .then(() => {
+            dispatch(removeTodoAC(payload))
+        })
+        .catch(error => {
+            console.log(error.message)
+        })
+}
+
+export const updateTodoTitleThunk = (payload: { todoId: string, title: string }): ThunkActionType => dispatch => {
+    todosApi.updateTodo(payload)
+        .then(() => {
+            dispatch(changeTodoTitleAC(payload))
+        })
+        .catch(error => {
+            console.log(error.message)
+        })
+}

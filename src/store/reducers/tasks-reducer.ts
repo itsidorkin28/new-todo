@@ -155,3 +155,33 @@ export const updateTaskStatusThunk = (
         })
 }
 
+export const updateTaskTitleThunk = (
+    payload: { todoId: string, taskId: string, title: string },
+): ThunkActionType => (
+    dispatch,
+    getState: () => RootStateType,
+) => {
+    const allTasks = getState().tasks
+    const tasksOfCurrentTodo = allTasks[payload.todoId]
+    const currentTask = tasksOfCurrentTodo.find(t => t.id === payload.taskId)
+    if (!currentTask) {
+        console.warn('Task not found in the state')
+        return
+    }
+    const model: UpdateTaskModelType = {
+        title: payload.title,
+        status: currentTask.status,
+        priority: currentTask.priority,
+        description: currentTask.description,
+        deadline: currentTask.deadline,
+        startDate: currentTask.startDate
+    }
+    todosApi.updateTask({ ...payload, model })
+        .then(() => {
+            dispatch(changeTaskTitleAC(payload))
+        })
+        .catch(error => {
+            console.log(error.message)
+        })
+}
+
