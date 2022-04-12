@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { AddForm, Button, EditableSpan, Title } from '../../components'
 import { TodoProps } from './Todo.props'
 import styles from './Todo.module.scss'
 import cn from 'classnames'
 import { Task } from '../Task/Task'
 import { FilterType } from '../../store/reducers/todos-reducer'
+import { deleteTasksThunk, fetchTasksThunk } from '../../store/reducers/tasks-reducer'
+import { useDispatch } from 'react-redux'
 
 export const Todo = React.memo(({
                                     todoId,
@@ -21,15 +23,19 @@ export const Todo = React.memo(({
                                     changeTaskTitle,
                                     ...props
                                 }: TodoProps): JSX.Element => {
-    const onChangeCheckboxHandle =  useCallback((taskId: string, isDone: boolean) => {
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(fetchTasksThunk({ todoId }))
+    }, [dispatch, todoId])
+    const onChangeCheckboxHandle = useCallback((taskId: string, isDone: boolean) => {
         changeTaskStatus(todoId, taskId, isDone)
     }, [changeTaskStatus, todoId])
-    const changeTaskTitleHandle =  useCallback((taskId: string, title: string) => {
+    const changeTaskTitleHandle = useCallback((taskId: string, title: string) => {
         changeTaskTitle(todoId, taskId, title)
     }, [changeTaskTitle, todoId])
     const removeTaskHandle = useCallback((taskId: string) => {
-        removeTask(todoId, taskId)
-    }, [removeTask, todoId])
+        dispatch(deleteTasksThunk({ todoId, taskId }))
+    }, [dispatch, todoId])
     const tasksListJSX = tasksList.map(el => {
         return <Task key={el.id}
                      task={el} removeTask={removeTaskHandle}
@@ -44,7 +50,7 @@ export const Todo = React.memo(({
     const changeTodoTitleHandle = useCallback((title: string) => {
         changeTodoTitle(todoId, title)
     }, [changeTodoTitle, todoId])
-    const setTodoFilterHandle =  useCallback((filter: FilterType) => {
+    const setTodoFilterHandle = useCallback((filter: FilterType) => {
         setTodoFilter(todoId, filter)
     }, [setTodoFilter, todoId])
     const removeTodoHandle = useCallback(() => {

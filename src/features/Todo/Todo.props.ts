@@ -1,11 +1,11 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import { ITask } from '../../store/reducers/tasks-reducer'
+import { TaskDomainType } from '../../store/reducers/tasks-reducer'
 import { FilterType } from '../../store/reducers/todos-reducer'
 
 export interface TodoProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     todoId: string
     title: string
-    tasksList: Array<ITask>
+    tasksList: Array<TaskDomainType>
     removeTask: (todoId: string, taskId: string) => void
     addTask: (todoId: string, title: string) => void
     filter: FilterType

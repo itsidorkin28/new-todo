@@ -14,3 +14,6 @@ export type RootStateType = ReturnType<typeof rootReducer>
 export type RootActionType = TodosActionsType | TasksActionsType
 export type ThunkActionType = ThunkAction<void, RootStateType, unknown, RootActionType>
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+window.store = store

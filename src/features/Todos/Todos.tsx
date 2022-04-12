@@ -1,13 +1,13 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootStateType } from '../../store/store'
 import {
     addTodoAC,
     changeTodoTitleAC,
     FilterType,
-    ITodo,
+    TodoDomainType,
     removeTodoAC,
-    setTodoFilterAC,
+    setTodoFilterAC, setTodos, fetchTodosThunk,
 } from '../../store/reducers/todos-reducer'
 import {
     addTaskAC,
@@ -23,14 +23,19 @@ import { Todo } from '../Todo/Todo'
 export const Todos = (): JSX.Element => {
     const dispatch = useDispatch()
 
-    const todos = useSelector<RootStateType, Array<ITodo>>(state => state.todos)
+    useEffect(() => {
+        dispatch(fetchTodosThunk())
+    }, [dispatch])
+
+    const todos = useSelector<RootStateType, Array<TodoDomainType>>(state => state.todos)
     const tasks = useSelector<RootStateType, ITasks>(state => state.tasks)
+
 
     const changeTaskStatus = useCallback((todoId: string, taskId: string, isDone: boolean) => {
         dispatch(changeTaskStatusAC({ todoId, taskId, isDone }))
     }, [dispatch])
     const changeTaskTitle = useCallback((todoId: string, taskId: string, title: string) => {
-        dispatch(changeTaskTitleAC({ todoId, taskId, title, }))
+        dispatch(changeTaskTitleAC({ todoId, taskId, title }))
     }, [dispatch])
     const removeTask = useCallback((todoId: string, taskId: string) => {
         dispatch(removeTaskAC({ todoId, taskId }))

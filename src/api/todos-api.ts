@@ -7,33 +7,65 @@ const instance = axios.create({
         'api-key': '1e90b645-3ab8-4f0b-b1bb-01b70c47396d',
     },
 })
+
 export const todosApi = {
     getTodos() {
         return instance.get<TodoType[]>('todo-lists')
     },
-    createTodo(title: string) {
-        return instance.post<ResponseType<{ item: TodoType }>>('todo-lists', { title })
+    createTodo(payload: { title: string }) {
+        return instance.post<CommonResponseType<{ item: TodoType }>>('todo-lists',
+            { title: payload.title })
     },
-    deleteTodo(todoId: string) {
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        return instance.delete<ResponseType<{}>>('todo-lists', { params: { todoId } })
+    deleteTodo(payload: { todoId: string }) {
+        return instance.delete<CommonResponseType>('todo-lists',
+            { params: { todoId: payload.todoId } })
     },
-    updateTodo(todoId: string, title: string) {
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        return instance.put<ResponseType<{}>>('todo-lists', { title }, { params: { todoId } })
+    updateTodo(payload: { todoId: string, title: string }) {
+        return instance.put<CommonResponseType>('todo-lists',
+            { title: payload.title },
+            { params: { todoId: payload.todoId } })
+    },
+    getTasks(payload: { todoId: string }) {
+        return instance.get<GetTasksResponse<TaskType>>(`todo-lists/${payload.todoId}/tasks`)
+    },
+    deleteTasks(payload: { todoId: string, taskId: string}) {
+        return instance.delete<CommonResponseType>(`todo-lists/${payload.todoId}/tasks/${payload.taskId}`)
     },
 }
 
-type TodoType = {
+export type TodoType = {
     id: string,
     title: string,
     addedDate: string,
     order: number
 }
 
-type ResponseType<T> = {
+// eslint-disable-next-line @typescript-eslint/ban-types
+type CommonResponseType<T = {}> = {
     data: T,
     messages: string[],
     fieldsErrors: string[],
-    resultCode: number
+    resultCode: number,
 }
+
+export type TaskType = {
+    id: string
+    title: string
+    description: string,
+    todoListId: string,
+    order: number,
+    status: number,
+    priority: number,
+    startDate: string,
+    deadline: string,
+    addedDate: string,
+}
+
+type GetTasksResponse<T> = {
+    items: T[],
+    totalCount: number,
+    error: string,
+}
+
+
+

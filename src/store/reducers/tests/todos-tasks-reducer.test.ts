@@ -1,12 +1,12 @@
 import { v1 } from 'uuid'
 import { ITasks, tasksReducer } from '../tasks-reducer'
-import { addTodoAC, ITodo, todosReducer } from '../todos-reducer'
+import { addTodoAC, TodoDomainType, todosReducer } from '../todos-reducer'
 
 test('ids should be equals', () => {
     const startTasksState: ITasks = {}
-    const startTodosState: Array<ITodo> =[]
+    const startTodosState: Array<TodoDomainType> = []
     const todoId = v1()
-    const action = addTodoAC({todoId, title: 'new todo'})
+    const action = addTodoAC({ todoId, title: 'new todo' })
 
     const endTasksState = tasksReducer(startTasksState, action)
     const endTodosState = todosReducer(startTodosState, action)
