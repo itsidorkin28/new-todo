@@ -2,24 +2,20 @@ import React, { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootStateType } from '../../store/store'
 import {
-    addTodoAC,
     changeTodoTitleAC,
     FilterType,
     TodoDomainType,
     removeTodoAC,
-    setTodoFilterAC, fetchTodosThunk,
+    setTodoFilterAC, fetchTodosThunk, addTodoThunk,
 } from '../../store/reducers/todos-reducer'
 import {
-    addTaskAC,
-    changeTaskStatusAC,
+    addTaskThunk,
     changeTaskTitleAC,
-    ITasks,
-    removeTaskAC,
+    removeTaskAC, TaskDomainType, updateTaskStatusThunk,
 } from '../../store/reducers/tasks-reducer'
-import { v1 } from 'uuid'
 import { AddForm, Title } from '../../components'
 import { Todo } from '../Todo/Todo'
-import { TaskStatus } from '../../api/todos-api'
+import { TaskStatuses } from '../../api/todos-api'
 
 export const Todos = (): JSX.Element => {
     const dispatch = useDispatch()
@@ -29,11 +25,11 @@ export const Todos = (): JSX.Element => {
     }, [dispatch])
 
     const todos = useSelector<RootStateType, Array<TodoDomainType>>(state => state.todos)
-    const tasks = useSelector<RootStateType, ITasks>(state => state.tasks)
+    const tasks = useSelector<RootStateType, TaskDomainType>(state => state.tasks)
 
 
-    const changeTaskStatus = useCallback((todoId: string, taskId: string, status: TaskStatus) => {
-        dispatch(changeTaskStatusAC({ todoId, taskId, status }))
+    const changeTaskStatus = useCallback((todoId: string, taskId: string, status: TaskStatuses) => {
+        dispatch(updateTaskStatusThunk({ todoId, taskId, status }))
     }, [dispatch])
     const changeTaskTitle = useCallback((todoId: string, taskId: string, title: string) => {
         dispatch(changeTaskTitleAC({ todoId, taskId, title }))
@@ -42,7 +38,7 @@ export const Todos = (): JSX.Element => {
         dispatch(removeTaskAC({ todoId, taskId }))
     }, [dispatch])
     const addTask = useCallback((todoId: string, title: string) => {
-        dispatch(addTaskAC({ todoId, taskId: v1(), title }))
+        dispatch(addTaskThunk({ todoId, title }))
     }, [dispatch])
     const changeTodoTitle = useCallback((todoId: string, title: string) => {
         dispatch(changeTodoTitleAC({ todoId, title }))
@@ -54,7 +50,7 @@ export const Todos = (): JSX.Element => {
         dispatch(setTodoFilterAC({ todoId, filter }))
     }, [dispatch])
     const addTodo = useCallback((title: string) => {
-        dispatch(addTodoAC({ todoId: v1(), title }))
+        dispatch(addTodoThunk({ title }))
     }, [dispatch])
 
     return <>
@@ -66,10 +62,10 @@ export const Todos = (): JSX.Element => {
             let tasksList
             switch (el.filter) {
                 case 'active':
-                    tasksList = tasks[el.id].filter(el => el.status === TaskStatus.active)
+                    tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.InProgress)
                     break
                 case 'completed':
-                    tasksList = tasks[el.id].filter(el => el.status === TaskStatus.completed)
+                    tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.Completed)
                     break
                 default:
                     tasksList = tasks[el.id]

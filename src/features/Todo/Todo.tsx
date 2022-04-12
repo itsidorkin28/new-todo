@@ -7,7 +7,7 @@ import { Task } from '../Task/Task'
 import { FilterType } from '../../store/reducers/todos-reducer'
 import { deleteTaskThunk, fetchTasksThunk } from '../../store/reducers/tasks-reducer'
 import { useDispatch } from 'react-redux'
-import { TaskStatus } from '../../api/todos-api'
+import { TaskStatuses } from '../../api/todos-api'
 
 export const Todo = React.memo(({
                                     todoId,
@@ -28,7 +28,7 @@ export const Todo = React.memo(({
     useEffect(() => {
         dispatch(fetchTasksThunk({ todoId }))
     }, [dispatch, todoId])
-    const onChangeCheckboxHandle = useCallback((taskId: string, status: TaskStatus) => {
+    const onChangeCheckboxHandle = useCallback((taskId: string, status: TaskStatuses) => {
         changeTaskStatus(todoId, taskId, status)
     }, [changeTaskStatus, todoId])
     const changeTaskTitleHandle = useCallback((taskId: string, title: string) => {

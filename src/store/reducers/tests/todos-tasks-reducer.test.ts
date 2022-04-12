@@ -1,12 +1,17 @@
-import { v1 } from 'uuid'
-import { ITasks, tasksReducer } from '../tasks-reducer'
+import { TaskDomainType, tasksReducer } from '../tasks-reducer'
 import { addTodoAC, TodoDomainType, todosReducer } from '../todos-reducer'
 
 test('ids should be equals', () => {
-    const startTasksState: ITasks = {}
+    const startTasksState: TaskDomainType = {}
     const startTodosState: Array<TodoDomainType> = []
-    const todoId = v1()
-    const action = addTodoAC({ todoId, title: 'new todo' })
+    const action = addTodoAC({
+        todo: {
+            id: '1',
+            title: 'title',
+            addedDate: 'date',
+            order: 0
+        }
+    })
 
     const endTasksState = tasksReducer(startTasksState, action)
     const endTodosState = todosReducer(startTodosState, action)
@@ -15,6 +20,6 @@ test('ids should be equals', () => {
     const idFromTasks = keys[0]
     const idFromTodos = endTodosState[0].id
 
-    expect(idFromTasks).toBe(action.todoId)
-    expect(idFromTodos).toBe(action.todoId)
+    expect(idFromTasks).toBe(action.todo.id)
+    expect(idFromTodos).toBe(action.todo.id)
 })

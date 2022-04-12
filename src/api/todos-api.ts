@@ -12,25 +12,38 @@ export const todosApi = {
     getTodos() {
         return instance.get<TodoType[]>('todo-lists')
     },
-    createTodo(payload: { title: string }) {
+    addTodo(payload: { title: string }) {
         return instance.post<CommonResponseType<{ item: TodoType }>>('todo-lists',
             { title: payload.title })
     },
     deleteTodo(payload: { todoId: string }) {
-        return instance.delete<CommonResponseType>('todo-lists',
-            { params: { todoId: payload.todoId } })
+        return instance.delete<CommonResponseType>(`todo-lists/${payload.todoId}`)
     },
     updateTodo(payload: { todoId: string, title: string }) {
-        return instance.put<CommonResponseType>('todo-lists',
-            { title: payload.title },
-            { params: { todoId: payload.todoId } })
+        return instance.put<CommonResponseType>(`todo-lists/${payload.todoId}`,
+            { title: payload.title })
     },
     getTasks(payload: { todoId: string }) {
-        return instance.get<GetTasksResponse<TaskType>>(`todo-lists/${payload.todoId}/tasks`)
+        return instance.get<GetTasksResponse<TaskType[]>>(`todo-lists/${payload.todoId}/tasks`)
     },
-    deleteTasks(payload: { todoId: string, taskId: string}) {
+    deleteTasks(payload: { todoId: string, taskId: string }) {
         return instance.delete<CommonResponseType>(`todo-lists/${payload.todoId}/tasks/${payload.taskId}`)
     },
+    addTask(payload: { todoId: string, title: string }) {
+        return instance.post<CommonResponseType<{ item: TaskType }>>(`todo-lists/${payload.todoId}/tasks`, { title: payload.title })
+    },
+    updateTask(payload: { todoId: string, taskId: string, model: UpdateTaskModelType }) {
+        return instance.put<CommonResponseType<{ item: TaskType }>>(`todo-lists/${payload.todoId}/tasks/${payload.taskId}`, payload.model)
+    },
+}
+
+export type UpdateTaskModelType = {
+    description: string
+    title: string
+    status: TaskStatuses
+    priority: TaskPriorities
+    startDate: string
+    deadline: string
 }
 
 export type TodoType = {
@@ -54,23 +67,31 @@ export type TaskType = {
     description: string,
     todoListId: string,
     order: number,
-    status: TaskStatus,
-    priority: number,
+    status: TaskStatuses,
+    priority: TaskPriorities,
     startDate: string,
     deadline: string,
     addedDate: string,
 }
 
-export enum TaskStatus {
-    active = 0,
-    completed = 1,
+export enum TaskPriorities {
+    Low = 0,
+    Middle = 1,
+    Hi = 2,
+    Urgently = 3,
+    Later = 4,
+}
+
+export enum TaskStatuses {
+    New = 0,
+    InProgress = 1,
+    Completed = 2,
+    Draft = 3,
 }
 
 type GetTasksResponse<T> = {
-    items: T[],
+    items: T,
     totalCount: number,
     error: string,
 }
-
-
 

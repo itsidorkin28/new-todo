@@ -20,7 +20,7 @@ export type TodosActionsType =
     | ReturnType<typeof removeTodoAC>
     | ReturnType<typeof setTodoFilterAC>
     | ReturnType<typeof addTodoAC>
-    | ReturnType<typeof setTodos>
+    | ReturnType<typeof setTodosAC>
 
 const initialState: Array<TodoDomainType> = []
 
@@ -29,13 +29,7 @@ export const todosReducer = (state: Array<TodoDomainType> = initialState, action
         case TODOS_ACTIONS.SET_TODOS:
             return action.todos.map(el => ({ ...el, filter: 'all' }))
         case TODOS_ACTIONS.ADD_TODO:
-            return [{
-                id: action.todoId,
-                title: action.title,
-                filter: 'all',
-                addedDate: '1',
-                order: 0,
-            }, ...state]
+            return [{ ...action.todo, filter: 'all' }, ...state]
         case TODOS_ACTIONS.REMOVE_TODO:
             return state.filter(el => el.id !== action.todoId)
         case TODOS_ACTIONS.SET_TODO_FILTER:
@@ -50,7 +44,7 @@ export const todosReducer = (state: Array<TodoDomainType> = initialState, action
     }
 }
 
-export const setTodos = (payload: { todos: TodoType[] }) => {
+export const setTodosAC = (payload: { todos: TodoType[] }) => {
     return { type: TODOS_ACTIONS.SET_TODOS, ...payload } as const
 }
 
@@ -63,14 +57,24 @@ export const removeTodoAC = (payload: { todoId: string }) => {
 export const setTodoFilterAC = (payload: { todoId: string, filter: FilterType }) => {
     return { type: TODOS_ACTIONS.SET_TODO_FILTER, ...payload } as const
 }
-export const addTodoAC = (payload: { todoId: string, title: string }) => {
+export const addTodoAC = (payload: { todo: TodoType }) => {
     return { type: TODOS_ACTIONS.ADD_TODO, ...payload } as const
 }
 
 export const fetchTodosThunk = (): ThunkActionType => dispatch => {
     todosApi.getTodos()
         .then(res => {
-            dispatch(setTodos({ todos: res.data }))
+            dispatch(setTodosAC({ todos: res.data }))
+        })
+        .catch(error => {
+            console.log(error.message)
+        })
+}
+
+export const addTodoThunk = (payload: { title: string }): ThunkActionType => dispatch => {
+    todosApi.addTodo(payload)
+        .then(res => {
+            dispatch(addTodoAC({ todo: res.data.data.item }))
         })
         .catch(error => {
             console.log(error.message)

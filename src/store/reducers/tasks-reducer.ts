@@ -1,11 +1,9 @@
-import { addTodoAC, removeTodoAC, setTodos, TODOS_ACTIONS } from './todos-reducer'
-import { ThunkActionType } from '../store'
-import { TaskStatus, TaskType, todosApi } from '../../api/todos-api'
+import { addTodoAC, removeTodoAC, setTodosAC, TODOS_ACTIONS } from './todos-reducer'
+import { RootStateType, ThunkActionType } from '../store'
+import { TaskStatuses, TaskType, todosApi, UpdateTaskModelType } from '../../api/todos-api'
 
-export type TaskDomainType = TaskType
-
-export interface ITasks {
-    [todoId: string]: Array<TaskDomainType>
+export interface TaskDomainType {
+    [todoId: string]: Array<TaskType>
 }
 
 export enum TASKS_ACTIONS {
@@ -23,28 +21,17 @@ export type TasksActionsType =
     | ReturnType<typeof changeTaskStatusAC>
     | ReturnType<typeof addTodoAC>
     | ReturnType<typeof removeTodoAC>
-    | ReturnType<typeof setTodos>
+    | ReturnType<typeof setTodosAC>
     | ReturnType<typeof setTasks>
 
-const initialState: ITasks = {}
+const initialState: TaskDomainType = {}
 
-export const tasksReducer = (state: ITasks = initialState, action: TasksActionsType): ITasks => {
+export const tasksReducer = (state: TaskDomainType = initialState, action: TasksActionsType): TaskDomainType => {
     switch (action.type) {
         case TASKS_ACTIONS.ADD_TASK:
             return {
                 ...state,
-                [action.todoId]: [{
-                    id: action.taskId,
-                    title: action.title,
-                    todoListId: action.todoId,
-                    deadline: '',
-                    description: '',
-                    order: 0,
-                    status: 0,
-                    priority: 0,
-                    startDate: '',
-                    addedDate: '',
-                }, ...state[action.todoId]],
+                [action.task.todoListId]: [{ ...action.task }, ...state[action.task.todoListId]],
             }
         case TASKS_ACTIONS.REMOVE_TASK:
             return {
@@ -68,7 +55,7 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
                 } : el),
             }
         case TODOS_ACTIONS.ADD_TODO:
-            return { ...state, [action.todoId]: [] }
+            return { ...state, [action.todo.id]: [] }
         case TODOS_ACTIONS.REMOVE_TODO: {
             const stateCopy = { ...state }
             delete stateCopy[action.todoId]
@@ -84,7 +71,7 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
         case TASKS_ACTIONS.SET_TASKS:
             return {
                 ...state,
-                [action.todoId]: action.tasks.map(el => ({ ...el, isDone: false })),
+                [action.todoId]: action.tasks.map(el => ({ ...el })),
             }
         default:
             return state
@@ -92,30 +79,21 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
 }
 
 export const setTasks = (payload: { todoId: string, tasks: TaskType[] }) => {
-    return { type: TASKS_ACTIONS.SET_TASKS, tasks: payload.tasks, todoId: payload.todoId } as const
+    return { type: TASKS_ACTIONS.SET_TASKS, ...payload } as const
 }
-
-export const addTaskAC = (payload: { todoId: string, taskId: string, title: string }) => {
-    return {
-        type: TASKS_ACTIONS.ADD_TASK,
-        ...payload,
-    } as const
+export const addTaskAC = (payload: { task: TaskType }) => {
+    return { type: TASKS_ACTIONS.ADD_TASK, ...payload } as const
 }
 export const removeTaskAC = (payload: { todoId: string, taskId: string }) => {
-    return { type: TASKS_ACTIONS.REMOVE_TASK, todoId: payload.todoId, taskId: payload.taskId } as const
+    return { type: TASKS_ACTIONS.REMOVE_TASK, ...payload } as const
 }
 export const changeTaskTitleAC = (payload: { todoId: string, taskId: string, title: string }) => {
-    return {
-        type: TASKS_ACTIONS.CHANGE_TASK_TITLE,
-        ...payload,
-    } as const
+    return { type: TASKS_ACTIONS.CHANGE_TASK_TITLE, ...payload } as const
 }
-export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, status: TaskStatus }) => {
-    return {
-        type: TASKS_ACTIONS.CHANGE_TASK_STATUS,
-        ...payload,
-    } as const
+export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, status: TaskStatuses }) => {
+    return { type: TASKS_ACTIONS.CHANGE_TASK_STATUS, ...payload } as const
 }
+
 
 export const fetchTasksThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
     todosApi.getTasks(payload)
@@ -131,6 +109,46 @@ export const deleteTaskThunk = (payload: { todoId: string, taskId: string }): Th
     todosApi.deleteTasks(payload)
         .then(() => {
             dispatch(removeTaskAC(payload))
+        })
+        .catch(error => {
+            console.log(error.message)
+        })
+}
+
+export const addTaskThunk = (payload: { todoId: string, title: string }): ThunkActionType => dispatch => {
+    todosApi.addTask(payload)
+        .then(res => {
+            dispatch(addTaskAC({ task: res.data.data.item }))
+        })
+        .catch(error => {
+            console.log(error.message)
+        })
+}
+
+export const updateTaskStatusThunk = (
+    payload: { todoId: string, taskId: string, status: TaskStatuses },
+): ThunkActionType => (
+    dispatch,
+    getState: () => RootStateType,
+) => {
+    const allTasks = getState().tasks
+    const tasksOfCurrentTodo = allTasks[payload.todoId]
+    const currentTask = tasksOfCurrentTodo.find(t => t.id === payload.taskId)
+    if (!currentTask) {
+        console.warn('Task not found in the state')
+        return
+    }
+    const model: UpdateTaskModelType = {
+        title: currentTask.title,
+        status: payload.status,
+        priority: currentTask.priority,
+        description: currentTask.description,
+        deadline: currentTask.deadline,
+        startDate: currentTask.startDate
+    }
+    todosApi.updateTask({ ...payload, model })
+        .then(() => {
+            dispatch(changeTaskStatusAC(payload))
         })
         .catch(error => {
             console.log(error.message)
