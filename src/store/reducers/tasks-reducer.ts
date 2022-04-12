@@ -84,7 +84,7 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
         case TASKS_ACTIONS.SET_TASKS:
             return {
                 ...state,
-                [action.todoId]: action.tasks.map(el => ({...el, isDone: false}))
+                [action.todoId]: action.tasks.map(el => ({ ...el, isDone: false })),
             }
         default:
             return state
@@ -98,9 +98,7 @@ export const setTasks = (payload: { todoId: string, tasks: TaskType[] }) => {
 export const addTaskAC = (payload: { todoId: string, taskId: string, title: string }) => {
     return {
         type: TASKS_ACTIONS.ADD_TASK,
-        todoId: payload.todoId,
-        taskId: payload.taskId,
-        title: payload.title,
+        ...payload,
     } as const
 }
 export const removeTaskAC = (payload: { todoId: string, taskId: string }) => {
@@ -109,33 +107,29 @@ export const removeTaskAC = (payload: { todoId: string, taskId: string }) => {
 export const changeTaskTitleAC = (payload: { todoId: string, taskId: string, title: string }) => {
     return {
         type: TASKS_ACTIONS.CHANGE_TASK_TITLE,
-        todoId: payload.todoId,
-        taskId: payload.taskId,
-        title: payload.title,
+        ...payload,
     } as const
 }
 export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, status: TaskStatus }) => {
     return {
         type: TASKS_ACTIONS.CHANGE_TASK_STATUS,
-        todoId: payload.todoId,
-        taskId: payload.taskId,
-        status: payload.status,
+        ...payload,
     } as const
 }
 
 export const fetchTasksThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
     todosApi.getTasks(payload)
         .then(res => {
-            dispatch(setTasks({ todoId: payload.todoId, tasks: res.data.items, }))
+            dispatch(setTasks({ todoId: payload.todoId, tasks: res.data.items }))
         })
         .catch(error => {
             console.log(error.message)
         })
 }
 
-export const deleteTasksThunk = (payload: { todoId: string, taskId: string }): ThunkActionType => dispatch => {
+export const deleteTaskThunk = (payload: { todoId: string, taskId: string }): ThunkActionType => dispatch => {
     todosApi.deleteTasks(payload)
-        .then(res => {
+        .then(() => {
             dispatch(removeTaskAC(payload))
         })
         .catch(error => {

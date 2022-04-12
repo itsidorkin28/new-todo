@@ -51,20 +51,20 @@ export const todosReducer = (state: Array<TodoDomainType> = initialState, action
 }
 
 export const setTodos = (payload: { todos: TodoType[] }) => {
-    return { type: TODOS_ACTIONS.SET_TODOS, todos: payload.todos } as const
+    return { type: TODOS_ACTIONS.SET_TODOS, ...payload } as const
 }
 
 export const changeTodoTitleAC = (payload: { todoId: string, title: string }) => {
-    return { type: TODOS_ACTIONS.CHANGE_TODO_TITLE, todoId: payload.todoId, title: payload.title } as const
+    return { type: TODOS_ACTIONS.CHANGE_TODO_TITLE, ...payload } as const
 }
 export const removeTodoAC = (payload: { todoId: string }) => {
-    return { type: TODOS_ACTIONS.REMOVE_TODO, todoId: payload.todoId } as const
+    return { type: TODOS_ACTIONS.REMOVE_TODO, ...payload } as const
 }
 export const setTodoFilterAC = (payload: { todoId: string, filter: FilterType }) => {
-    return { type: TODOS_ACTIONS.SET_TODO_FILTER, todoId: payload.todoId, filter: payload.filter } as const
+    return { type: TODOS_ACTIONS.SET_TODO_FILTER, ...payload } as const
 }
 export const addTodoAC = (payload: { todoId: string, title: string }) => {
-    return { type: TODOS_ACTIONS.ADD_TODO, todoId: payload.todoId, title: payload.title } as const
+    return { type: TODOS_ACTIONS.ADD_TODO, ...payload } as const
 }
 
 export const fetchTodosThunk = (): ThunkActionType => dispatch => {

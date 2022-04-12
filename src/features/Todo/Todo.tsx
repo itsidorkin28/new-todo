@@ -5,7 +5,7 @@ import styles from './Todo.module.scss'
 import cn from 'classnames'
 import { Task } from '../Task/Task'
 import { FilterType } from '../../store/reducers/todos-reducer'
-import { deleteTasksThunk, fetchTasksThunk } from '../../store/reducers/tasks-reducer'
+import { deleteTaskThunk, fetchTasksThunk } from '../../store/reducers/tasks-reducer'
 import { useDispatch } from 'react-redux'
 import { TaskStatus } from '../../api/todos-api'
 
@@ -35,7 +35,7 @@ export const Todo = React.memo(({
         changeTaskTitle(todoId, taskId, title)
     }, [changeTaskTitle, todoId])
     const removeTaskHandle = useCallback((taskId: string) => {
-        dispatch(deleteTasksThunk({ todoId, taskId }))
+        dispatch(deleteTaskThunk({ todoId, taskId }))
     }, [dispatch, todoId])
     const tasksListJSX = tasksList.map(el => {
         return <Task key={el.id}
