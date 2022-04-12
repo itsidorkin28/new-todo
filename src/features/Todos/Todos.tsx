@@ -7,7 +7,7 @@ import {
     FilterType,
     TodoDomainType,
     removeTodoAC,
-    setTodoFilterAC, setTodos, fetchTodosThunk,
+    setTodoFilterAC, fetchTodosThunk,
 } from '../../store/reducers/todos-reducer'
 import {
     addTaskAC,
@@ -19,6 +19,7 @@ import {
 import { v1 } from 'uuid'
 import { AddForm, Title } from '../../components'
 import { Todo } from '../Todo/Todo'
+import { TaskStatus } from '../../api/todos-api'
 
 export const Todos = (): JSX.Element => {
     const dispatch = useDispatch()
@@ -31,8 +32,8 @@ export const Todos = (): JSX.Element => {
     const tasks = useSelector<RootStateType, ITasks>(state => state.tasks)
 
 
-    const changeTaskStatus = useCallback((todoId: string, taskId: string, isDone: boolean) => {
-        dispatch(changeTaskStatusAC({ todoId, taskId, isDone }))
+    const changeTaskStatus = useCallback((todoId: string, taskId: string, status: TaskStatus) => {
+        dispatch(changeTaskStatusAC({ todoId, taskId, status }))
     }, [dispatch])
     const changeTaskTitle = useCallback((todoId: string, taskId: string, title: string) => {
         dispatch(changeTaskTitleAC({ todoId, taskId, title }))
@@ -65,10 +66,10 @@ export const Todos = (): JSX.Element => {
             let tasksList
             switch (el.filter) {
                 case 'active':
-                    tasksList = tasks[el.id].filter(el => !el.isDone)
+                    tasksList = tasks[el.id].filter(el => el.status === TaskStatus.active)
                     break
                 case 'completed':
-                    tasksList = tasks[el.id].filter(el => el.isDone)
+                    tasksList = tasks[el.id].filter(el => el.status === TaskStatus.completed)
                     break
                 default:
                     tasksList = tasks[el.id]

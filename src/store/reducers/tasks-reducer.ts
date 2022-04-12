@@ -1,10 +1,8 @@
 import { addTodoAC, removeTodoAC, setTodos, TODOS_ACTIONS } from './todos-reducer'
 import { ThunkActionType } from '../store'
-import { TaskType, todosApi } from '../../api/todos-api'
+import { TaskStatus, TaskType, todosApi } from '../../api/todos-api'
 
-export type TaskDomainType = TaskType & {
-    isDone: boolean
-}
+export type TaskDomainType = TaskType
 
 export interface ITasks {
     [todoId: string]: Array<TaskDomainType>
@@ -38,7 +36,6 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
                 [action.todoId]: [{
                     id: action.taskId,
                     title: action.title,
-                    isDone: false,
                     todoListId: action.todoId,
                     deadline: '',
                     description: '',
@@ -67,7 +64,7 @@ export const tasksReducer = (state: ITasks = initialState, action: TasksActionsT
                 ...state,
                 [action.todoId]: state[action.todoId].map(el => el.id === action.taskId ? {
                     ...el,
-                    isDone: action.isDone,
+                    status: action.status,
                 } : el),
             }
         case TODOS_ACTIONS.ADD_TODO:
@@ -117,12 +114,12 @@ export const changeTaskTitleAC = (payload: { todoId: string, taskId: string, tit
         title: payload.title,
     } as const
 }
-export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, isDone: boolean }) => {
+export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, status: TaskStatus }) => {
     return {
         type: TASKS_ACTIONS.CHANGE_TASK_STATUS,
         todoId: payload.todoId,
         taskId: payload.taskId,
-        isDone: payload.isDone,
+        status: payload.status,
     } as const
 }
 

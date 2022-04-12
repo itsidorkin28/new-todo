@@ -24,7 +24,6 @@ ActiveTaskStory.args = {
     task: {
         id: '1',
         title: 'Task',
-        isDone: false,
         deadline: '',
         description: '',
         order: 0,
@@ -41,11 +40,10 @@ CompletedTaskStory.args = {
     task: {
         id: '1',
         title: 'Task',
-        isDone: true,
         deadline: '',
         description: '',
         order: 0,
-        status: 0,
+        status: 1,
         priority: 0,
         startDate: '',
         addedDate: '',

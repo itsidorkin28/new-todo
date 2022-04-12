@@ -54,11 +54,16 @@ export type TaskType = {
     description: string,
     todoListId: string,
     order: number,
-    status: number,
+    status: TaskStatus,
     priority: number,
     startDate: string,
     deadline: string,
     addedDate: string,
+}
+
+export enum TaskStatus {
+    active = 0,
+    completed = 1,
 }
 
 type GetTasksResponse<T> = {
