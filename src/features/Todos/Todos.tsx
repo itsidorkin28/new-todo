@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootStateType } from '../../store/store'
+import { useDispatch } from 'react-redux'
+import { useAppSelector } from '../../store/store'
 import {
     FilterType,
     TodoDomainType,
@@ -21,8 +21,8 @@ export const Todos = (): JSX.Element => {
         dispatch(fetchTodosThunk())
     }, [dispatch])
 
-    const todos = useSelector<RootStateType, Array<TodoDomainType>>(state => state.todos)
-    const tasks = useSelector<RootStateType, TaskDomainType>(state => state.tasks)
+    const todos = useAppSelector<Array<TodoDomainType>>(state => state.todos)
+    const tasks = useAppSelector<TaskDomainType>(state => state.tasks)
 
 
     const changeTaskStatus = useCallback((todoId: string, taskId: string, status: TaskStatuses) => {

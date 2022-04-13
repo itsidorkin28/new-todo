@@ -8,6 +8,7 @@ import { FilterType } from '../../store/reducers/todos-reducer'
 import { deleteTaskThunk, fetchTasksThunk } from '../../store/reducers/tasks-reducer'
 import { useDispatch } from 'react-redux'
 import { TaskStatuses } from '../../api/todos-api'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 export const Todo = React.memo(({
                                     todoId,
@@ -59,13 +60,13 @@ export const Todo = React.memo(({
     }, [removeTodo, todoId])
     return <div className={cn(styles.todo, className)} {...props}>
         <Button appearance={'ghost'} onClick={removeTodoHandle} round={true}>
-            x
+            <DeleteForeverIcon fontSize={'small'}/>
         </Button>
         <Title tag={'h3'}>
             <EditableSpan title={title} changeTitle={changeTodoTitleHandle} />
         </Title>
         <AddForm onCreate={createTask} />
-        <ul>
+        <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
             {tasksListJSX}
         </ul>
         <div>

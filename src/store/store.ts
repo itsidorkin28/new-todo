@@ -1,9 +1,12 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { TodosActionsType, todosReducer } from './reducers/todos-reducer'
 import { TasksActionsType, tasksReducer } from './reducers/tasks-reducer'
-import thunkMiddleware, {ThunkAction} from 'redux-thunk'
+import thunkMiddleware, { ThunkAction } from 'redux-thunk'
+import { AppActionsType, appReducer } from './reducers/app-reducer'
+import { TypedUseSelectorHook, useSelector } from 'react-redux'
 
 const rootReducer = combineReducers({
+    app: appReducer,
     todos: todosReducer,
     tasks: tasksReducer,
 })
@@ -11,9 +14,10 @@ const rootReducer = combineReducers({
 export const store = createStore(rootReducer, applyMiddleware(thunkMiddleware))
 
 export type RootStateType = ReturnType<typeof rootReducer>
-export type RootActionType = TodosActionsType | TasksActionsType
+export type RootActionType = TodosActionsType | TasksActionsType | AppActionsType
 export type ThunkActionType = ThunkAction<void, RootStateType, unknown, RootActionType>
 
+export const useAppSelector: TypedUseSelectorHook<RootStateType> = useSelector
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 window.store = store

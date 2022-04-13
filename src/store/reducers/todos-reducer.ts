@@ -1,5 +1,6 @@
 import { ThunkActionType } from '../store'
 import { todosApi, TodoType } from '../../api/todos-api'
+import { setAppStatusAC } from './app-reducer'
 
 export type FilterType = 'all' | 'active' | 'completed'
 
@@ -62,11 +63,14 @@ export const addTodoAC = (payload: { todo: TodoType }) => {
 }
 
 export const fetchTodosThunk = (): ThunkActionType => dispatch => {
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.getTodos()
         .then(res => {
             dispatch(setTodosAC({ todos: res.data }))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
+            dispatch(setAppStatusAC({ status: 'failed' }))
             console.log(error.message)
         })
 }
