@@ -1,6 +1,6 @@
 import { ThunkActionType } from '../store'
 import { todosApi, TodoType } from '../../api/todos-api'
-import { setAppStatusAC } from './app-reducer'
+import { setAppErrorAC, setAppStatusAC } from './app-reducer'
 
 export type FilterType = 'all' | 'active' | 'completed'
 
@@ -70,37 +70,49 @@ export const fetchTodosThunk = (): ThunkActionType => dispatch => {
             dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
-            dispatch(setAppStatusAC({ status: 'failed' }))
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 
 export const addTodoThunk = (payload: { title: string }): ThunkActionType => dispatch => {
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.addTodo(payload)
         .then(res => {
+            if (res.data.resultCode === 1) {
+                dispatch(setAppErrorAC({error: res.data.messages[0]}))
+            }
             dispatch(addTodoAC({ todo: res.data.data.item }))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 
 export const deleteTodoThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.deleteTodo(payload)
         .then(() => {
             dispatch(removeTodoAC(payload))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 
 export const updateTodoTitleThunk = (payload: { todoId: string, title: string }): ThunkActionType => dispatch => {
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.updateTodo(payload)
         .then(() => {
             dispatch(changeTodoTitleAC(payload))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }

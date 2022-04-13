@@ -1,6 +1,7 @@
 import { addTodoAC, removeTodoAC, setTodosAC, TODOS_ACTIONS } from './todos-reducer'
 import { RootStateType, ThunkActionType } from '../store'
 import { TaskStatuses, TaskType, todosApi, UpdateTaskModelType } from '../../api/todos-api'
+import { setAppErrorAC, setAppStatusAC } from './app-reducer'
 
 export interface TaskDomainType {
     [todoId: string]: Array<TaskType>
@@ -96,32 +97,44 @@ export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, st
 
 
 export const fetchTasksThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.getTasks(payload)
         .then(res => {
             dispatch(setTasks({ todoId: payload.todoId, tasks: res.data.items }))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 
 export const deleteTaskThunk = (payload: { todoId: string, taskId: string }): ThunkActionType => dispatch => {
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.deleteTasks(payload)
         .then(() => {
             dispatch(removeTaskAC(payload))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 
 export const addTaskThunk = (payload: { todoId: string, title: string }): ThunkActionType => dispatch => {
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.addTask(payload)
         .then(res => {
+            if (res.data.resultCode === 1) {
+                dispatch(setAppErrorAC({error: res.data.messages[0]}))
+            }
             dispatch(addTaskAC({ task: res.data.data.item }))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
-            console.log(error.message)
+            setAppErrorAC({error: error.message})
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 
@@ -146,12 +159,15 @@ export const updateTaskStatusThunk = (
         deadline: currentTask.deadline,
         startDate: currentTask.startDate
     }
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.updateTask({ ...payload, model })
         .then(() => {
             dispatch(changeTaskStatusAC(payload))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 
@@ -176,12 +192,15 @@ export const updateTaskTitleThunk = (
         deadline: currentTask.deadline,
         startDate: currentTask.startDate
     }
+    dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.updateTask({ ...payload, model })
         .then(() => {
             dispatch(changeTaskTitleAC(payload))
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
         .catch(error => {
             console.log(error.message)
+            dispatch(setAppStatusAC({ status: 'failed' }))
         })
 }
 

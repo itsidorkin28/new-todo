@@ -13,6 +13,7 @@ import {
 import { AddForm, Title } from '../../components'
 import { Todo } from '../Todo/Todo'
 import { TaskStatuses } from '../../api/todos-api'
+import styles from './Todos.module.scss'
 
 export const Todos = (): JSX.Element => {
     const dispatch = useDispatch()
@@ -51,41 +52,43 @@ export const Todos = (): JSX.Element => {
         dispatch(addTodoThunk({ title }))
     }, [dispatch])
 
-    return <>
+    return <div>
         <Title tag={'h2'}>
             Add todo
         </Title>
         <AddForm onCreate={addTodo} />
-        {todos.map(el => {
-            let tasksList
-            switch (el.filter) {
-                case 'active':
-                    tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.InProgress)
-                    break
-                case 'completed':
-                    tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.Completed)
-                    break
-                default:
-                    tasksList = tasks[el.id]
-            }
-            return (
-                <Todo
-                    key={el.id}
-                    todoId={el.id}
-                    title={el.title}
-                    removeTodo={removeTodo}
-                    tasksList={tasksList}
-                    removeTask={removeTask}
-                    addTask={addTask}
-                    changeTaskTitle={changeTaskTitle}
-                    changeTodoTitle={changeTodoTitle}
-                    setTodoFilter={setTodoFilter}
-                    filter={el.filter}
-                    changeTaskStatus={changeTaskStatus}
-                />
-            )
-        })}
-    </>
+        <div className={styles.todos}>
+            {todos.map(el => {
+                let tasksList
+                switch (el.filter) {
+                    case 'active':
+                        tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.InProgress)
+                        break
+                    case 'completed':
+                        tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.Completed)
+                        break
+                    default:
+                        tasksList = tasks[el.id]
+                }
+                return (
+                    <Todo
+                        key={el.id}
+                        todoId={el.id}
+                        title={el.title}
+                        removeTodo={removeTodo}
+                        tasksList={tasksList}
+                        removeTask={removeTask}
+                        addTask={addTask}
+                        changeTaskTitle={changeTaskTitle}
+                        changeTodoTitle={changeTodoTitle}
+                        setTodoFilter={setTodoFilter}
+                        filter={el.filter}
+                        changeTaskStatus={changeTaskStatus}
+                    />
+                )
+            })}
+        </div>
+    </div>
 }
 
 
