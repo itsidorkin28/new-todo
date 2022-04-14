@@ -1,5 +1,5 @@
 import { ThunkActionType } from '../store'
-import { todosApi, TodoType } from '../../api/todos-api'
+import { ResponseStatuses, todosApi, TodoType } from '../../api/todos-api'
 import { RequestStatusType, setAppErrorAC, setAppStatusAC } from './app-reducer'
 import { AxiosError } from 'axios'
 
@@ -45,7 +45,7 @@ export const todosReducer = (state: Array<TodoDomainType> = initialState, action
         case TODOS_ACTIONS.CHANGE_TODO_TITLE:
             return state.map(el => el.id === action.todoId ? { ...el, title: action.title } : el)
         case TODOS_ACTIONS.CHANGE_TODO_ENTITY_STATUS:
-            return state.map(el => el.id === action.todoId ? {...el, entityStatus: action.status} : el)
+            return state.map(el => el.id === action.todoId ? { ...el, entityStatus: action.status } : el)
         default:
             return state
     }
@@ -88,7 +88,7 @@ export const addTodoThunk = (payload: { title: string }): ThunkActionType => dis
     dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.addTodo(payload)
         .then(res => {
-            if (res.data.resultCode === 0) {
+            if (res.data.resultCode === ResponseStatuses.Success) {
                 dispatch(addTodoAC({ todo: res.data.data.item }))
             } else {
                 dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
@@ -104,7 +104,7 @@ export const addTodoThunk = (payload: { title: string }): ThunkActionType => dis
 
 export const deleteTodoThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
     dispatch(setAppStatusAC({ status: 'loading' }))
-    dispatch(changeTodoEntityStatusAC({todoId: payload.todoId, status: 'loading'}))
+    dispatch(changeTodoEntityStatusAC({ todoId: payload.todoId, status: 'loading' }))
     todosApi.deleteTodo(payload)
         .then(() => {
             dispatch(removeTodoAC(payload))
@@ -114,7 +114,7 @@ export const deleteTodoThunk = (payload: { todoId: string }): ThunkActionType =>
         })
         .finally(() => {
             dispatch(setAppStatusAC({ status: 'success' }))
-            dispatch(changeTodoEntityStatusAC({todoId: payload.todoId, status: 'success'}))
+            dispatch(changeTodoEntityStatusAC({ todoId: payload.todoId, status: 'success' }))
         })
 }
 

@@ -1,6 +1,6 @@
 import { addTodoAC, removeTodoAC, setTodosAC, TODOS_ACTIONS } from './todos-reducer'
 import { RootStateType, ThunkActionType } from '../store'
-import { TaskStatuses, TaskType, todosApi, UpdateTaskModelType } from '../../api/todos-api'
+import { ResponseStatuses, TaskStatuses, TaskType, todosApi, UpdateTaskModelType } from '../../api/todos-api'
 import { setAppErrorAC, setAppStatusAC } from './app-reducer'
 import { AxiosError } from 'axios'
 
@@ -97,6 +97,7 @@ export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, st
 }
 
 
+
 export const fetchTasksThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
     dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.getTasks(payload)
@@ -129,7 +130,7 @@ export const addTaskThunk = (payload: { todoId: string, title: string }): ThunkA
     dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.addTask(payload)
         .then(res => {
-            if (res.data.resultCode === 0) {
+            if (res.data.resultCode === ResponseStatuses.Success) {
                 dispatch(addTaskAC({ task: res.data.data.item }))
             } else {
                 dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))

@@ -95,3 +95,7 @@ type GetTasksResponse<T> = {
     error: string,
 }
 
+export enum ResponseStatuses {
+    Success = 0,
+    Error = 1,
+}
