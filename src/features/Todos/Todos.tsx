@@ -14,17 +14,20 @@ import { AddForm, Title } from '../../components'
 import { Todo } from '../Todo/Todo'
 import { TaskStatuses } from '../../api/todos-api'
 import styles from './Todos.module.scss'
+import { Navigate } from 'react-router-dom'
 
 export const Todos = (): JSX.Element => {
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        dispatch(fetchTodosThunk())
-    }, [dispatch])
-
     const todos = useAppSelector<Array<TodoDomainType>>(state => state.todos)
     const tasks = useAppSelector<TaskDomainType>(state => state.tasks)
+    const isLoggedIn = useAppSelector<boolean>(state => state.login.isLoggedIn)
 
+    useEffect(() => {
+        if (!isLoggedIn) {
+            return
+        }
+        dispatch(fetchTodosThunk())
+    }, [dispatch, isLoggedIn])
 
     const changeTaskStatus = useCallback((todoId: string, taskId: string, status: TaskStatuses) => {
         dispatch(updateTaskStatusThunk({ todoId, taskId, status }))
@@ -51,6 +54,10 @@ export const Todos = (): JSX.Element => {
     const addTodo = useCallback((title: string) => {
         dispatch(addTodoThunk({ title }))
     }, [dispatch])
+
+    if (!isLoggedIn) {
+        return <Navigate to='/login' />
+    }
 
     return <div>
         <Title tag={'h2'}>

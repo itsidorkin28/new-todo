@@ -9,6 +9,7 @@ export const Button = React.memo(({ children, className, appearance, round = fal
             className={cn(styles.button, className, {
                 [styles.primary]: appearance === 'primary',
                 [styles.ghost]: appearance === 'ghost',
+                [styles.white]: appearance === 'white',
                 [styles.round]: round,
             })}
             {...props}

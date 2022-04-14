@@ -17,6 +17,7 @@ export type TodosActionsType =
     | ReturnType<typeof addTodoAC>
     | ReturnType<typeof setTodosAC>
     | ReturnType<typeof changeTodoEntityStatusAC>
+    | ReturnType<typeof cleanUpTodosAndTasksAC>
 
 const initialState: Array<TodoDomainType> = []
 
@@ -37,6 +38,8 @@ export const todosReducer = (state: Array<TodoDomainType> = initialState, action
             return state.map(el => el.id === action.todoId ? { ...el, title: action.title } : el)
         case 'TODOS/CHANGE-TODO-ENTITY-STATUS':
             return state.map(el => el.id === action.todoId ? { ...el, entityStatus: action.status } : el)
+        case 'TODOS/CLEAN-UP-TODOS-AND-TASKS':
+            return []
         default:
             return state
     }
@@ -60,6 +63,11 @@ export const addTodoAC = (payload: { todo: TodoType }) => {
 export const changeTodoEntityStatusAC = (payload: { todoId: string, status: RequestStatusType }) => {
     return { type: 'TODOS/CHANGE-TODO-ENTITY-STATUS', ...payload } as const
 }
+export const cleanUpTodosAndTasksAC = () => {
+    return { type: 'TODOS/CLEAN-UP-TODOS-AND-TASKS' } as const
+}
+
+
 
 export const fetchTodosThunk = (): ThunkActionType => dispatch => {
     dispatch(setAppStatusAC({ status: 'loading' }))

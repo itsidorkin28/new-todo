@@ -8,6 +8,18 @@ const instance = axios.create({
     },
 })
 
+export const authApi = {
+    authMe() {
+        return instance.get<CommonResponseType<AuthMeResponseType>>('auth/me')
+    },
+    logout() {
+        return instance.delete<CommonResponseType>('auth/login')
+    },
+    login(payload: { data: LoginParamsType }) {
+        return instance.post<CommonResponseType<{ userId: number }>>('auth/login', { ...payload.data })
+    },
+}
+
 export const todosApi = {
     getTodos() {
         return instance.get<TodoType[]>('todo-lists')
@@ -98,4 +110,17 @@ type GetTasksResponse<T> = {
 export enum ResponseStatuses {
     Success = 0,
     Error = 1,
+}
+
+export type LoginParamsType = {
+    email: string
+    password: string
+    rememberMe: boolean
+    captcha?: string
+}
+
+type AuthMeResponseType = {
+    id: number,
+    login: string,
+    email: string
 }

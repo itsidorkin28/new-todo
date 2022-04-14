@@ -30,11 +30,7 @@ export const Task = React.memo(({
             className={cn({
                 [styles.completed]: status === TaskStatuses.Completed,
             })}>
-            <Checkbox sx={{
-                '&.Mui-checked': {
-                    color: '#7653FC',
-                },
-            }}
+            <Checkbox sx={{ '&.Mui-checked': { color: '#7653FC' } }}
                       checked={status === TaskStatuses.Completed}
                       onChange={onChangeCheckboxHandle}
                       size={'small'} />
@@ -42,7 +38,7 @@ export const Task = React.memo(({
                  <EditableSpan title={title} changeTitle={changeTaskTitleHandle} />
             </span>
             <Button appearance={'ghost'} onClick={removeTaskHandle} round={true}>
-                    <DeleteForeverIcon fontSize={'small'}/>
+                <DeleteForeverIcon fontSize={'small'} />
             </Button>
         </li>
     </div>

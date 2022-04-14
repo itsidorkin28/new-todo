@@ -1,4 +1,4 @@
-import { addTodoAC, removeTodoAC, setTodosAC } from './todos-reducer'
+import { addTodoAC, cleanUpTodosAndTasksAC, removeTodoAC, setTodosAC } from './todos-reducer'
 import { RootStateType, ThunkActionType } from '../store'
 import { ResponseStatuses, TaskStatuses, TaskType, todosApi, UpdateTaskModelType } from '../../api/todos-api'
 import { setAppErrorAC, setAppStatusAC } from './app-reducer'
@@ -17,6 +17,7 @@ export type TasksActionsType =
     | ReturnType<typeof removeTodoAC>
     | ReturnType<typeof setTodosAC>
     | ReturnType<typeof setTasks>
+    | ReturnType<typeof cleanUpTodosAndTasksAC>
 
 const initialState: TaskDomainType = {}
 
@@ -67,6 +68,8 @@ export const tasksReducer = (state: TaskDomainType = initialState, action: Tasks
                 ...state,
                 [action.todoId]: action.tasks.map(el => ({ ...el })),
             }
+        case 'TODOS/CLEAN-UP-TODOS-AND-TASKS':
+            return {}
         default:
             return state
     }

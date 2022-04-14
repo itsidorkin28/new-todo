@@ -50,3 +50,15 @@
 		background-color: var(--primary);
 	}
 }
+
+.white {
+	color: var(--black);
+	border: 1px solid var(--gray-light);
+	background: var(--white);
+
+	&:hover {
+		color: var(--white);
+		border: 1px solid var(--red);
+		background-color: var(--red);
+	}
+}
