@@ -10,15 +10,6 @@ export type TodoDomainType = TodoType & {
     entityStatus: RequestStatusType
 }
 
-export enum TODOS_ACTIONS {
-    ADD_TODO = 'TODOS/ADD_TODO',
-    REMOVE_TODO = 'TODOS/REMOVE_TODO',
-    CHANGE_TODO_TITLE = 'TODOS/CHANGE_TODO_TITLE',
-    SET_TODO_FILTER = 'TODOS/SET_TODO_FILTER',
-    SET_TODOS = 'TODOS/SET_TODOS',
-    CHANGE_TODO_ENTITY_STATUS = 'TODOS/CHANGE_TODO_ENTITY_STATUS',
-}
-
 export type TodosActionsType =
     ReturnType<typeof changeTodoTitleAC>
     | ReturnType<typeof removeTodoAC>
@@ -31,20 +22,20 @@ const initialState: Array<TodoDomainType> = []
 
 export const todosReducer = (state: Array<TodoDomainType> = initialState, action: TodosActionsType): Array<TodoDomainType> => {
     switch (action.type) {
-        case TODOS_ACTIONS.SET_TODOS:
+        case 'TODOS/SET-TODOS':
             return action.todos.map(el => ({ ...el, filter: 'all', entityStatus: 'idle' }))
-        case TODOS_ACTIONS.ADD_TODO:
+        case 'TODOS/ADD-TODO':
             return [{ ...action.todo, filter: 'all', entityStatus: 'idle' }, ...state]
-        case TODOS_ACTIONS.REMOVE_TODO:
+        case 'TODOS/REMOVE-TODO':
             return state.filter(el => el.id !== action.todoId)
-        case TODOS_ACTIONS.SET_TODO_FILTER:
+        case 'TODOS/SET-TODO-FILTER':
             return state.map(el => el.id === action.todoId ? {
                 ...el,
                 filter: action.filter,
             } : el)
-        case TODOS_ACTIONS.CHANGE_TODO_TITLE:
+        case 'TODOS/CHANGE-TODO-TITLE':
             return state.map(el => el.id === action.todoId ? { ...el, title: action.title } : el)
-        case TODOS_ACTIONS.CHANGE_TODO_ENTITY_STATUS:
+        case 'TODOS/CHANGE-TODO-ENTITY-STATUS':
             return state.map(el => el.id === action.todoId ? { ...el, entityStatus: action.status } : el)
         default:
             return state
@@ -52,22 +43,22 @@ export const todosReducer = (state: Array<TodoDomainType> = initialState, action
 }
 
 export const setTodosAC = (payload: { todos: TodoType[] }) => {
-    return { type: TODOS_ACTIONS.SET_TODOS, ...payload } as const
+    return { type: 'TODOS/SET-TODOS', ...payload } as const
 }
 export const changeTodoTitleAC = (payload: { todoId: string, title: string }) => {
-    return { type: TODOS_ACTIONS.CHANGE_TODO_TITLE, ...payload } as const
+    return { type: 'TODOS/CHANGE-TODO-TITLE', ...payload } as const
 }
 export const removeTodoAC = (payload: { todoId: string }) => {
-    return { type: TODOS_ACTIONS.REMOVE_TODO, ...payload } as const
+    return { type: 'TODOS/REMOVE-TODO', ...payload } as const
 }
 export const setTodoFilterAC = (payload: { todoId: string, filter: FilterType }) => {
-    return { type: TODOS_ACTIONS.SET_TODO_FILTER, ...payload } as const
+    return { type: 'TODOS/SET-TODO-FILTER', ...payload } as const
 }
 export const addTodoAC = (payload: { todo: TodoType }) => {
-    return { type: TODOS_ACTIONS.ADD_TODO, ...payload } as const
+    return { type: 'TODOS/ADD-TODO', ...payload } as const
 }
 export const changeTodoEntityStatusAC = (payload: { todoId: string, status: RequestStatusType }) => {
-    return { type: TODOS_ACTIONS.CHANGE_TODO_ENTITY_STATUS, ...payload } as const
+    return { type: 'TODOS/CHANGE-TODO-ENTITY-STATUS', ...payload } as const
 }
 
 export const fetchTodosThunk = (): ThunkActionType => dispatch => {

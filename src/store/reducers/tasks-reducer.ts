@@ -1,4 +1,4 @@
-import { addTodoAC, removeTodoAC, setTodosAC, TODOS_ACTIONS } from './todos-reducer'
+import { addTodoAC, removeTodoAC, setTodosAC } from './todos-reducer'
 import { RootStateType, ThunkActionType } from '../store'
 import { ResponseStatuses, TaskStatuses, TaskType, todosApi, UpdateTaskModelType } from '../../api/todos-api'
 import { setAppErrorAC, setAppStatusAC } from './app-reducer'
@@ -6,14 +6,6 @@ import { AxiosError } from 'axios'
 
 export interface TaskDomainType {
     [todoId: string]: Array<TaskType>
-}
-
-export enum TASKS_ACTIONS {
-    ADD_TASK = 'TASKS/ADD_TASK',
-    REMOVE_TASK = 'TASKS/REMOVE_TASK',
-    CHANGE_TASK_STATUS = 'TASKS/CHANGE_TASK_STATUS',
-    CHANGE_TASK_TITLE = 'TASKS/CHANGE_TASK_TITLE',
-    SET_TASKS = 'TASKS/SET_TASKS',
 }
 
 export type TasksActionsType =
@@ -30,17 +22,17 @@ const initialState: TaskDomainType = {}
 
 export const tasksReducer = (state: TaskDomainType = initialState, action: TasksActionsType): TaskDomainType => {
     switch (action.type) {
-        case TASKS_ACTIONS.ADD_TASK:
+        case 'TASKS/ADD-TASKS':
             return {
                 ...state,
                 [action.task.todoListId]: [{ ...action.task }, ...state[action.task.todoListId]],
             }
-        case TASKS_ACTIONS.REMOVE_TASK:
+        case 'TASKS/REMOVE-TASKS':
             return {
                 ...state,
                 [action.todoId]: state[action.todoId].filter(el => el.id !== action.taskId),
             }
-        case TASKS_ACTIONS.CHANGE_TASK_TITLE:
+        case 'TASKS/CHANGE-TASK-TITLE':
             return {
                 ...state,
                 [action.todoId]: state[action.todoId].map(el => el.id === action.taskId ? {
@@ -48,7 +40,7 @@ export const tasksReducer = (state: TaskDomainType = initialState, action: Tasks
                     title: action.title,
                 } : el),
             }
-        case TASKS_ACTIONS.CHANGE_TASK_STATUS:
+        case 'TASKS/CHANGE-TASK-STATUS':
             return {
                 ...state,
                 [action.todoId]: state[action.todoId].map(el => el.id === action.taskId ? {
@@ -56,21 +48,21 @@ export const tasksReducer = (state: TaskDomainType = initialState, action: Tasks
                     status: action.status,
                 } : el),
             }
-        case TODOS_ACTIONS.ADD_TODO:
+        case 'TODOS/ADD-TODO':
             return { ...state, [action.todo.id]: [] }
-        case TODOS_ACTIONS.REMOVE_TODO: {
+        case 'TODOS/REMOVE-TODO': {
             const stateCopy = { ...state }
             delete stateCopy[action.todoId]
             return stateCopy
         }
-        case TODOS_ACTIONS.SET_TODOS:
+        case 'TODOS/SET-TODOS':
             // eslint-disable-next-line no-case-declarations
             const stateCopy = { ...state }
             action.todos.forEach(el => {
                 stateCopy[el.id] = []
             })
             return stateCopy
-        case TASKS_ACTIONS.SET_TASKS:
+        case 'TASKS/SET-TASKS':
             return {
                 ...state,
                 [action.todoId]: action.tasks.map(el => ({ ...el })),
@@ -81,21 +73,20 @@ export const tasksReducer = (state: TaskDomainType = initialState, action: Tasks
 }
 
 export const setTasks = (payload: { todoId: string, tasks: TaskType[] }) => {
-    return { type: TASKS_ACTIONS.SET_TASKS, ...payload } as const
+    return { type: 'TASKS/SET-TASKS', ...payload } as const
 }
 export const addTaskAC = (payload: { task: TaskType }) => {
-    return { type: TASKS_ACTIONS.ADD_TASK, ...payload } as const
+    return { type: 'TASKS/ADD-TASKS', ...payload } as const
 }
 export const removeTaskAC = (payload: { todoId: string, taskId: string }) => {
-    return { type: TASKS_ACTIONS.REMOVE_TASK, ...payload } as const
+    return { type: 'TASKS/REMOVE-TASKS', ...payload } as const
 }
 export const changeTaskTitleAC = (payload: { todoId: string, taskId: string, title: string }) => {
-    return { type: TASKS_ACTIONS.CHANGE_TASK_TITLE, ...payload } as const
+    return { type: 'TASKS/CHANGE-TASK-TITLE', ...payload } as const
 }
 export const changeTaskStatusAC = (payload: { todoId: string, taskId: string, status: TaskStatuses }) => {
-    return { type: TASKS_ACTIONS.CHANGE_TASK_STATUS, ...payload } as const
+    return { type: 'TASKS/CHANGE-TASK-STATUS', ...payload } as const
 }
-
 
 
 export const fetchTasksThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
