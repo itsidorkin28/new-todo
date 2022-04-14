@@ -1,6 +1,7 @@
 import { ThunkActionType } from '../store'
 import { todosApi, TodoType } from '../../api/todos-api'
 import { RequestStatusType, setAppErrorAC, setAppStatusAC } from './app-reducer'
+import { AxiosError } from 'axios'
 
 export type FilterType = 'all' | 'active' | 'completed'
 
@@ -74,11 +75,12 @@ export const fetchTodosThunk = (): ThunkActionType => dispatch => {
     todosApi.getTodos()
         .then(res => {
             dispatch(setTodosAC({ todos: res.data }))
-            dispatch(setAppStatusAC({ status: 'success' }))
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 
@@ -88,15 +90,15 @@ export const addTodoThunk = (payload: { title: string }): ThunkActionType => dis
         .then(res => {
             if (res.data.resultCode === 0) {
                 dispatch(addTodoAC({ todo: res.data.data.item }))
-                dispatch(setAppStatusAC({ status: 'success' }))
             } else {
                 dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
-                dispatch(setAppStatusAC({ status: 'failed' }))
             }
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 
@@ -106,13 +108,12 @@ export const deleteTodoThunk = (payload: { todoId: string }): ThunkActionType =>
     todosApi.deleteTodo(payload)
         .then(() => {
             dispatch(removeTodoAC(payload))
-            dispatch(setAppStatusAC({ status: 'success' }))
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
         })
         .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
             dispatch(changeTodoEntityStatusAC({todoId: payload.todoId, status: 'success'}))
         })
 }
@@ -122,11 +123,12 @@ export const updateTodoTitleThunk = (payload: { todoId: string, title: string })
     todosApi.updateTodo(payload)
         .then(() => {
             dispatch(changeTodoTitleAC(payload))
-            dispatch(setAppStatusAC({ status: 'success' }))
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 

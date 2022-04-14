@@ -2,6 +2,7 @@ import { addTodoAC, removeTodoAC, setTodosAC, TODOS_ACTIONS } from './todos-redu
 import { RootStateType, ThunkActionType } from '../store'
 import { TaskStatuses, TaskType, todosApi, UpdateTaskModelType } from '../../api/todos-api'
 import { setAppErrorAC, setAppStatusAC } from './app-reducer'
+import { AxiosError } from 'axios'
 
 export interface TaskDomainType {
     [todoId: string]: Array<TaskType>
@@ -101,11 +102,12 @@ export const fetchTasksThunk = (payload: { todoId: string }): ThunkActionType =>
     todosApi.getTasks(payload)
         .then(res => {
             dispatch(setTasks({ todoId: payload.todoId, tasks: res.data.items }))
-            dispatch(setAppStatusAC({ status: 'success' }))
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 
@@ -114,11 +116,12 @@ export const deleteTaskThunk = (payload: { todoId: string, taskId: string }): Th
     todosApi.deleteTasks(payload)
         .then(() => {
             dispatch(removeTaskAC(payload))
-            dispatch(setAppStatusAC({ status: 'success' }))
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 
@@ -128,15 +131,15 @@ export const addTaskThunk = (payload: { todoId: string, title: string }): ThunkA
         .then(res => {
             if (res.data.resultCode === 0) {
                 dispatch(addTaskAC({ task: res.data.data.item }))
-                dispatch(setAppStatusAC({ status: 'success' }))
             } else {
                 dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
-                dispatch(setAppStatusAC({ status: 'failed' }))
             }
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             setAppErrorAC({ error: error.message })
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 
@@ -165,11 +168,12 @@ export const updateTaskStatusThunk = (
     todosApi.updateTask({ ...payload, model })
         .then(() => {
             dispatch(changeTaskStatusAC(payload))
-            dispatch(setAppStatusAC({ status: 'success' }))
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 
@@ -198,11 +202,12 @@ export const updateTaskTitleThunk = (
     todosApi.updateTask({ ...payload, model })
         .then(() => {
             dispatch(changeTaskTitleAC(payload))
-            dispatch(setAppStatusAC({ status: 'success' }))
         })
-        .catch(error => {
+        .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+        })
+        .finally(() => {
+            dispatch(setAppStatusAC({ status: 'success' }))
         })
 }
 
