@@ -29,7 +29,6 @@ export const appReducer = (state: InitialStateType = initialState, action: AppAc
 export const setAppStatusAC = (payload: { status: RequestStatusType }) => {
     return { type: APP_ACTIONS.SET_STATUS, ...payload } as const
 }
-
 export const setAppErrorAC = (payload: { error: NullableType<string> }) => {
     return { type: APP_ACTIONS.SET_ERROR, ...payload } as const
 }

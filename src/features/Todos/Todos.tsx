@@ -56,7 +56,7 @@ export const Todos = (): JSX.Element => {
         <Title tag={'h2'}>
             Add todo
         </Title>
-        <AddForm onCreate={addTodo} />
+        <AddForm onCreate={addTodo}/>
         <div className={styles.todos}>
             {todos.map(el => {
                 let tasksList
@@ -83,6 +83,7 @@ export const Todos = (): JSX.Element => {
                         changeTodoTitle={changeTodoTitle}
                         setTodoFilter={setTodoFilter}
                         filter={el.filter}
+                        entityStatus={el.entityStatus}
                         changeTaskStatus={changeTaskStatus}
                     />
                 )

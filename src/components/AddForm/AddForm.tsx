@@ -6,7 +6,7 @@ import { Button } from '../Button/Button'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 import TextField from '@mui/material/TextField'
 
-export const AddForm = React.memo(({ className, onCreate, ...props }: AddFormProps): JSX.Element => {
+export const AddForm = React.memo(({ className, onCreate, disabled, ...props }: AddFormProps): JSX.Element => {
     const [value, setValue] = useState<string>('')
     const onChangeHandle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.currentTarget.value)
@@ -16,8 +16,8 @@ export const AddForm = React.memo(({ className, onCreate, ...props }: AddFormPro
     }, [onCreate, value])
     return <div className={cn(styles.form, className)} {...props}>
         <TextField color='secondary' label='Title' variant='outlined' size='small' value={value}
-                   onChange={onChangeHandle} />
-        <Button appearance={'ghost'} onClick={onClickHandle} round={true}>
+                   onChange={onChangeHandle} disabled={disabled}/>
+        <Button appearance={'ghost'} onClick={onClickHandle} round={true} disabled={disabled}>
             <PlaylistAddIcon fontSize={'small'} />
         </Button>
     </div>

@@ -20,6 +20,7 @@ export const Todo = React.memo(({
                                     removeTodo,
                                     addTask,
                                     filter,
+                                    entityStatus,
                                     changeTaskStatus,
                                     changeTodoTitle,
                                     changeTaskTitle,
@@ -59,13 +60,13 @@ export const Todo = React.memo(({
         removeTodo(todoId)
     }, [removeTodo, todoId])
     return <div className={cn(styles.todo, className)} {...props}>
-        <Button appearance={'ghost'} onClick={removeTodoHandle} round={true}>
-            <DeleteForeverIcon fontSize={'small'}/>
+        <Button appearance={'ghost'} onClick={removeTodoHandle} round={true} disabled={entityStatus === 'loading'}>
+            <DeleteForeverIcon fontSize={'small'} />
         </Button>
         <Title tag={'h3'}>
             <EditableSpan title={title} changeTitle={changeTodoTitleHandle} />
         </Title>
-        <AddForm onCreate={createTask} />
+        <AddForm onCreate={createTask} disabled={entityStatus === 'loading'}/>
         <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
             {tasksListJSX}
         </ul>
