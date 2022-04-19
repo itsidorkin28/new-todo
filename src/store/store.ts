@@ -1,10 +1,11 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux'
-import { TodosActionsType, todosReducer } from './reducers/todos-reducer'
-import { TasksActionsType, tasksReducer } from './reducers/tasks-reducer'
-import thunkMiddleware, { ThunkAction } from 'redux-thunk'
-import { AppActionsType, appReducer } from './reducers/app-reducer'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { todosReducer } from './reducers/todos-reducer'
+import { tasksReducer } from './reducers/tasks-reducer'
+import thunkMiddleware from 'redux-thunk'
+import { appReducer } from './reducers/app-reducer'
 import { TypedUseSelectorHook, useSelector } from 'react-redux'
-import { LoginActionsType, loginReducer } from './reducers/login-reducer'
+import { loginReducer } from './reducers/login-reducer'
+import logger from 'redux-logger'
 
 const rootReducer = combineReducers({
     login: loginReducer,
@@ -13,11 +14,12 @@ const rootReducer = combineReducers({
     tasks: tasksReducer,
 })
 
-export const store = createStore(rootReducer, applyMiddleware(thunkMiddleware))
+export const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunkMiddleware).concat(logger),
+})
 
 export type RootStateType = ReturnType<typeof rootReducer>
-export type RootActionType = TodosActionsType | TasksActionsType | AppActionsType | LoginActionsType
-export type ThunkActionType = ThunkAction<void, RootStateType, unknown, RootActionType>
 
 export const useAppSelector: TypedUseSelectorHook<RootStateType> = useSelector
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

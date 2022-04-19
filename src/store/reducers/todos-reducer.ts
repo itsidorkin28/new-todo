@@ -1,7 +1,7 @@
-import { ThunkActionType } from '../store'
 import { ResponseStatuses, todosApi, TodoType } from '../../api/todos-api'
 import { RequestStatusType, setAppErrorAC, setAppStatusAC } from './app-reducer'
 import { AxiosError } from 'axios'
+import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
 
 export type FilterType = 'all' | 'active' | 'completed'
 
@@ -10,66 +10,53 @@ export type TodoDomainType = TodoType & {
     entityStatus: RequestStatusType
 }
 
-export type TodosActionsType =
-    ReturnType<typeof changeTodoTitleAC>
-    | ReturnType<typeof removeTodoAC>
-    | ReturnType<typeof setTodoFilterAC>
-    | ReturnType<typeof addTodoAC>
-    | ReturnType<typeof setTodosAC>
-    | ReturnType<typeof changeTodoEntityStatusAC>
-    | ReturnType<typeof cleanUpTodosAndTasksAC>
-
 const initialState: Array<TodoDomainType> = []
 
-export const todosReducer = (state: Array<TodoDomainType> = initialState, action: TodosActionsType): Array<TodoDomainType> => {
-    switch (action.type) {
-        case 'TODOS/SET-TODOS':
-            return action.todos.map(el => ({ ...el, filter: 'all', entityStatus: 'idle' }))
-        case 'TODOS/ADD-TODO':
-            return [{ ...action.todo, filter: 'all', entityStatus: 'idle' }, ...state]
-        case 'TODOS/REMOVE-TODO':
-            return state.filter(el => el.id !== action.todoId)
-        case 'TODOS/SET-TODO-FILTER':
-            return state.map(el => el.id === action.todoId ? {
-                ...el,
-                filter: action.filter,
-            } : el)
-        case 'TODOS/CHANGE-TODO-TITLE':
-            return state.map(el => el.id === action.todoId ? { ...el, title: action.title } : el)
-        case 'TODOS/CHANGE-TODO-ENTITY-STATUS':
-            return state.map(el => el.id === action.todoId ? { ...el, entityStatus: action.status } : el)
-        case 'TODOS/CLEAN-UP-TODOS-AND-TASKS':
+export const todosSlice = createSlice({
+    name: 'todos',
+    initialState,
+    reducers: {
+        setTodosAC(state, action: PayloadAction<{ todos: TodoType[] }>) {
+            return action.payload.todos.map(el => ({ ...el, filter: 'all', entityStatus: 'idle' }))
+        },
+        changeTodoTitleAC(state, action: PayloadAction<{ todoId: string, title: string }>) {
+            const index = state.findIndex(tl => tl.id === action.payload.todoId)
+            if (index > -1) state[index].title = action.payload.title
+        },
+        removeTodoAC(state, action: PayloadAction<{ todoId: string }>) {
+            const index = state.findIndex(tl => tl.id === action.payload.todoId)
+            if (index > -1) state.splice(index, 1)
+        },
+        setTodoFilterAC(state, action: PayloadAction<{ todoId: string, filter: FilterType }>) {
+            const index = state.findIndex(tl => tl.id === action.payload.todoId)
+            if (index > -1) state[index].filter = action.payload.filter
+        },
+        addTodoAC(state, action: PayloadAction< { todo: TodoType }>) {
+            state.unshift({...action.payload.todo, filter: 'all', entityStatus: 'idle'})
+        },
+        changeTodoEntityStatusAC(state, action: PayloadAction<{ todoId: string, status: RequestStatusType }>) {
+            const index = state.findIndex(tl => tl.id === action.payload.todoId)
+            if (index > -1) state[index].entityStatus = action.payload.status
+        },
+        cleanUpTodosAndTasksAC() {
             return []
-        default:
-            return state
-    }
-}
+        },
+    },
+})
 
-export const setTodosAC = (payload: { todos: TodoType[] }) => {
-    return { type: 'TODOS/SET-TODOS', ...payload } as const
-}
-export const changeTodoTitleAC = (payload: { todoId: string, title: string }) => {
-    return { type: 'TODOS/CHANGE-TODO-TITLE', ...payload } as const
-}
-export const removeTodoAC = (payload: { todoId: string }) => {
-    return { type: 'TODOS/REMOVE-TODO', ...payload } as const
-}
-export const setTodoFilterAC = (payload: { todoId: string, filter: FilterType }) => {
-    return { type: 'TODOS/SET-TODO-FILTER', ...payload } as const
-}
-export const addTodoAC = (payload: { todo: TodoType }) => {
-    return { type: 'TODOS/ADD-TODO', ...payload } as const
-}
-export const changeTodoEntityStatusAC = (payload: { todoId: string, status: RequestStatusType }) => {
-    return { type: 'TODOS/CHANGE-TODO-ENTITY-STATUS', ...payload } as const
-}
-export const cleanUpTodosAndTasksAC = () => {
-    return { type: 'TODOS/CLEAN-UP-TODOS-AND-TASKS' } as const
-}
+export const todosReducer = todosSlice.reducer
+export const {
+    setTodosAC,
+    changeTodoTitleAC,
+    removeTodoAC,
+    setTodoFilterAC,
+    addTodoAC,
+    changeTodoEntityStatusAC,
+    cleanUpTodosAndTasksAC,
+} = todosSlice.actions
 
 
-
-export const fetchTodosThunk = (): ThunkActionType => dispatch => {
+export const fetchTodosThunk = () => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.getTodos()
         .then(res => {
@@ -83,7 +70,7 @@ export const fetchTodosThunk = (): ThunkActionType => dispatch => {
         })
 }
 
-export const addTodoThunk = (payload: { title: string }): ThunkActionType => dispatch => {
+export const addTodoThunk = (payload: { title: string }) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.addTodo(payload)
         .then(res => {
@@ -101,7 +88,7 @@ export const addTodoThunk = (payload: { title: string }): ThunkActionType => dis
         })
 }
 
-export const deleteTodoThunk = (payload: { todoId: string }): ThunkActionType => dispatch => {
+export const deleteTodoThunk = (payload: { todoId: string }) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
     dispatch(changeTodoEntityStatusAC({ todoId: payload.todoId, status: 'loading' }))
     todosApi.deleteTodo(payload)
@@ -117,7 +104,7 @@ export const deleteTodoThunk = (payload: { todoId: string }): ThunkActionType =>
         })
 }
 
-export const updateTodoTitleThunk = (payload: { todoId: string, title: string }): ThunkActionType => dispatch => {
+export const updateTodoTitleThunk = (payload: { todoId: string, title: string }) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
     todosApi.updateTodo(payload)
         .then(() => {

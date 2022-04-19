@@ -28,8 +28,8 @@ function App() {
         <Routes>
             <Route path='/' element={<Todos />} />
             <Route path='/login' element={<Login />} />
-            <Route path='404' element={<NotFound />} />
-            <Route path='*' element={<Navigate to={'/404'} />} />
+            <Route path='/404' element={<NotFound />} />
+            <Route path='*' element={<Navigate to={'/404'} replace />} />
         </Routes>
         <ErrorSnackBar />
     </>

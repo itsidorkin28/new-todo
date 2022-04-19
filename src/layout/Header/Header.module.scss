@@ -1,24 +1,23 @@
 .header {
-    display: grid;
+	display: grid;
 
-    padding: 25px 30px;
+	padding: 25px 30px;
 
-    color: var(--white);
-    background: var(--primary);
+	color: var(--white);
+	background: var(--primary);
 
-    font-size: 16px;
-    line-height: 20px;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-areas:
-		"title . . . . button";
+	font-size: 16px;
+	line-height: 20px;
+	grid-template-columns: repeat(6, 1fr);
+	grid-template-areas: "title . . . . button";
 
-    gap: 10px 40px;
+	gap: 10px 40px;
 
-    .title {
-        grid-area: title;
-    }
+	.title {
+		grid-area: title;
+	}
 
-    .button {
-        grid-area: button;
-    }
+	.button {
+		grid-area: button;
+	}
 }
