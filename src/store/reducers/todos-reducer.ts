@@ -70,9 +70,9 @@ export const fetchTodosThunk = () => (dispatch: Dispatch) => {
         })
 }
 
-export const addTodoThunk = (payload: { title: string }) => (dispatch: Dispatch) => {
+export const addTodoThunk = (param: { title: string }) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
-    todosApi.addTodo(payload)
+    todosApi.addTodo(param)
         .then(res => {
             if (res.data.resultCode === ResponseStatuses.Success) {
                 dispatch(addTodoAC({ todo: res.data.data.item }))
@@ -88,27 +88,27 @@ export const addTodoThunk = (payload: { title: string }) => (dispatch: Dispatch)
         })
 }
 
-export const deleteTodoThunk = (payload: { todoId: string }) => (dispatch: Dispatch) => {
+export const deleteTodoThunk = (param: { todoId: string }) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
-    dispatch(changeTodoEntityStatusAC({ todoId: payload.todoId, status: 'loading' }))
-    todosApi.deleteTodo(payload)
+    dispatch(changeTodoEntityStatusAC({ todoId: param.todoId, status: 'loading' }))
+    todosApi.deleteTodo(param)
         .then(() => {
-            dispatch(removeTodoAC(payload))
+            dispatch(removeTodoAC(param))
         })
         .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))
         })
         .finally(() => {
             dispatch(setAppStatusAC({ status: 'success' }))
-            dispatch(changeTodoEntityStatusAC({ todoId: payload.todoId, status: 'success' }))
+            dispatch(changeTodoEntityStatusAC({ todoId: param.todoId, status: 'success' }))
         })
 }
 
-export const updateTodoTitleThunk = (payload: { todoId: string, title: string }) => (dispatch: Dispatch) => {
+export const updateTodoTitleThunk = (param: { todoId: string, title: string }) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
-    todosApi.updateTodo(payload)
+    todosApi.updateTodo(param)
         .then(() => {
-            dispatch(changeTodoTitleAC(payload))
+            dispatch(changeTodoTitleAC(param))
         })
         .catch((error: AxiosError) => {
             dispatch(setAppErrorAC({ error: error.message }))

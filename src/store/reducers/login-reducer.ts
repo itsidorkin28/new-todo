@@ -20,9 +20,9 @@ export const loginSlice = createSlice({
 
 export const loginReducer = loginSlice.reducer
 export const { setIsLoggedInAC } = loginSlice.actions
-export const loginTC = (payload: {data: LoginParamsType}) => (dispatch: Dispatch) => {
+export const loginTC = (param: {data: LoginParamsType}) => (dispatch: Dispatch) => {
     dispatch(setAppStatusAC({ status: 'loading' }))
-    authApi.login(payload)
+    authApi.login(param)
         .then(res => {
             if (res.data.resultCode === ResponseStatuses.Success) {
                 dispatch(setIsLoggedInAC({value: true}))

@@ -15,8 +15,8 @@ export const authApi = {
     logout() {
         return instance.delete<CommonResponseType>('auth/login')
     },
-    login(payload: { data: LoginParamsType }) {
-        return instance.post<CommonResponseType<{ userId: number }>>('auth/login', { ...payload.data })
+    login(param: { data: LoginParamsType }) {
+        return instance.post<CommonResponseType<{ userId: number }>>('auth/login', { ...param.data })
     },
 }
 
@@ -24,28 +24,28 @@ export const todosApi = {
     getTodos() {
         return instance.get<TodoType[]>('todo-lists')
     },
-    addTodo(payload: { title: string }) {
+    addTodo(param: { title: string }) {
         return instance.post<CommonResponseType<{ item: TodoType }>>('todo-lists',
-            { title: payload.title })
+            { title: param.title })
     },
-    deleteTodo(payload: { todoId: string }) {
-        return instance.delete<CommonResponseType>(`todo-lists/${payload.todoId}`)
+    deleteTodo(param: { todoId: string }) {
+        return instance.delete<CommonResponseType>(`todo-lists/${param.todoId}`)
     },
-    updateTodo(payload: { todoId: string, title: string }) {
-        return instance.put<CommonResponseType>(`todo-lists/${payload.todoId}`,
-            { title: payload.title })
+    updateTodo(param: { todoId: string, title: string }) {
+        return instance.put<CommonResponseType>(`todo-lists/${param.todoId}`,
+            { title: param.title })
     },
-    getTasks(payload: { todoId: string }) {
-        return instance.get<GetTasksResponse<TaskType[]>>(`todo-lists/${payload.todoId}/tasks`)
+    getTasks(param: { todoId: string }) {
+        return instance.get<GetTasksResponse<TaskType[]>>(`todo-lists/${param.todoId}/tasks`)
     },
-    deleteTasks(payload: { todoId: string, taskId: string }) {
-        return instance.delete<CommonResponseType>(`todo-lists/${payload.todoId}/tasks/${payload.taskId}`)
+    deleteTasks(param: { todoId: string, taskId: string }) {
+        return instance.delete<CommonResponseType>(`todo-lists/${param.todoId}/tasks/${param.taskId}`)
     },
-    addTask(payload: { todoId: string, title: string }) {
-        return instance.post<CommonResponseType<{ item: TaskType }>>(`todo-lists/${payload.todoId}/tasks`, { title: payload.title })
+    addTask(param: { todoId: string, title: string }) {
+        return instance.post<CommonResponseType<{ item: TaskType }>>(`todo-lists/${param.todoId}/tasks`, { title: param.title })
     },
-    updateTask(payload: { todoId: string, taskId: string, model: UpdateTaskModelType }) {
-        return instance.put<CommonResponseType<{ item: TaskType }>>(`todo-lists/${payload.todoId}/tasks/${payload.taskId}`, payload.model)
+    updateTask(param: { todoId: string, taskId: string, model: UpdateTaskModelType }) {
+        return instance.put<CommonResponseType<{ item: TaskType }>>(`todo-lists/${param.todoId}/tasks/${param.taskId}`, param.model)
     },
 }
 

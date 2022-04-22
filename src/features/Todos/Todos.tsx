@@ -7,8 +7,7 @@ import {
     setTodoFilterAC, fetchTodosThunk, addTodoThunk, deleteTodoThunk, updateTodoTitleThunk,
 } from '../../store/reducers/todos-reducer'
 import {
-    addTaskThunk,
-    removeTaskAC, TaskDomainType, updateTaskStatusThunk, updateTaskTitleThunk,
+    addTaskThunk, deleteTaskThunk, TaskDomainType, updateTaskStatusThunk, updateTaskTitleThunk,
 } from '../../store/reducers/tasks-reducer'
 import { AddForm, Title } from '../../components'
 import { Todo } from '../Todo/Todo'
@@ -36,7 +35,7 @@ export const Todos = (): JSX.Element => {
         dispatch(updateTaskTitleThunk({ todoId, taskId, title }))
     }, [dispatch])
     const removeTask = useCallback((todoId: string, taskId: string) => {
-        dispatch(removeTaskAC({ todoId, taskId }))
+        dispatch(deleteTaskThunk({ todoId, taskId }))
     }, [dispatch])
     const addTask = useCallback((todoId: string, title: string) => {
         dispatch(addTaskThunk({ todoId, title }))
@@ -63,7 +62,7 @@ export const Todos = (): JSX.Element => {
         <Title tag={'h2'}>
             Add todo
         </Title>
-        <AddForm onCreate={addTodo}/>
+        <AddForm onCreate={addTodo} />
         <div className={styles.todos}>
             {todos.map(el => {
                 let tasksList
