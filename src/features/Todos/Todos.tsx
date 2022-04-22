@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useAppSelector } from '../../store/store'
+import { useAppDispatch, useAppSelector } from '../../store/store'
 import {
     FilterType,
     TodoDomainType,
     setTodoFilterAC, fetchTodosThunk, addTodoThunk, deleteTodoThunk, updateTodoTitleThunk,
 } from '../../store/reducers/todos-reducer'
 import {
-    addTaskThunk, deleteTaskThunk, TaskDomainType, updateTaskStatusThunk, updateTaskTitleThunk,
+    addTaskThunk, deleteTaskThunk, TaskDomainType, updateTaskThunk,
 } from '../../store/reducers/tasks-reducer'
 import { AddForm, Title } from '../../components'
 import { Todo } from '../Todo/Todo'
@@ -16,7 +15,7 @@ import styles from './Todos.module.scss'
 import { Navigate } from 'react-router-dom'
 
 export const Todos = (): JSX.Element => {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const todos = useAppSelector<Array<TodoDomainType>>(state => state.todos)
     const tasks = useAppSelector<TaskDomainType>(state => state.tasks)
     const isLoggedIn = useAppSelector<boolean>(state => state.login.isLoggedIn)
@@ -29,10 +28,10 @@ export const Todos = (): JSX.Element => {
     }, [dispatch, isLoggedIn])
 
     const changeTaskStatus = useCallback((todoId: string, taskId: string, status: TaskStatuses) => {
-        dispatch(updateTaskStatusThunk({ todoId, taskId, status }))
+        dispatch(updateTaskThunk({ todoId, taskId, model: { status } }))
     }, [dispatch])
     const changeTaskTitle = useCallback((todoId: string, taskId: string, title: string) => {
-        dispatch(updateTaskTitleThunk({ todoId, taskId, title }))
+        dispatch(updateTaskThunk({ todoId, taskId, model: { title } }))
     }, [dispatch])
     const removeTask = useCallback((todoId: string, taskId: string) => {
         dispatch(deleteTaskThunk({ todoId, taskId }))

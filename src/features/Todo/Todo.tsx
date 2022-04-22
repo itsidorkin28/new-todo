@@ -6,9 +6,9 @@ import cn from 'classnames'
 import { Task } from '../Task/Task'
 import { FilterType } from '../../store/reducers/todos-reducer'
 import { deleteTaskThunk, fetchTasksThunk } from '../../store/reducers/tasks-reducer'
-import { useDispatch } from 'react-redux'
 import { TaskStatuses } from '../../api/todos-api'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import { useAppDispatch } from '../../store/store'
 
 export const Todo = React.memo(({
                                     todoId,
@@ -26,7 +26,7 @@ export const Todo = React.memo(({
                                     changeTaskTitle,
                                     ...props
                                 }: TodoProps): JSX.Element => {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     useEffect(() => {
         dispatch(fetchTasksThunk({ todoId }))
     }, [dispatch, todoId])
