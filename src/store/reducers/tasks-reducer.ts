@@ -11,56 +11,49 @@ export interface TaskDomainType {
 const initialState: TaskDomainType = {}
 
 export const fetchTasksThunk = createAsyncThunk('tasks/fetchTasks',
-    async (param: { todoId: string }, thunkApi) => {
-    const { dispatch } = thunkApi
-    dispatch(setAppStatusAC({ status: 'loading' }))
-    try {
-        const pr = await todosApi.getTasks(param)
-        return { todoId: param.todoId, tasks: pr.data.items }
-    } catch (error) {
-        dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
-    } finally {
+    async (param: { todoId: string }, { dispatch }) => {
+        dispatch(setAppStatusAC({ status: 'loading' }))
+        const res = await todosApi.getTasks(param)
         dispatch(setAppStatusAC({ status: 'success' }))
-    }
-})
+        return { todoId: param.todoId, tasks: res.data.items }
+    })
 
 export const addTaskThunk = createAsyncThunk('tasks/addTask',
-    async (param: { todoId: string, title: string }, thunkApi) => {
-        const { dispatch } = thunkApi
+    async (param: { todoId: string, title: string }, { dispatch, rejectWithValue }) => {
         dispatch(setAppStatusAC({ status: 'loading' }))
         try {
-            const pr = await todosApi.addTask(param)
-            if (pr.data.resultCode === ResponseStatuses.Success) {
-                return { task: pr.data.data.item }
+            const res = await todosApi.addTask(param)
+            if (res.data.resultCode === ResponseStatuses.Success) {
+                dispatch(setAppStatusAC({ status: 'success' }))
+                return { task: res.data.data.item }
             } else {
-                dispatch(setAppErrorAC({ error: pr.data.messages.length ? pr.data.messages[0] : 'Some error occurred' }))
+                dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
+                dispatch(setAppStatusAC({ status: 'failed' }))
+                return rejectWithValue(null)
             }
         } catch (error) {
             dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
-        } finally {
-            dispatch(setAppStatusAC({ status: 'success' }))
+            dispatch(setAppStatusAC({ status: 'failed' }))
+            return rejectWithValue(null)
         }
     })
 
 
 export const deleteTaskThunk = createAsyncThunk('tasks/removeTasks',
-    async (param: { todoId: string, taskId: string }, thunkApi) => {
-        const { dispatch } = thunkApi
+    async (param: { todoId: string, taskId: string }, { dispatch }) => {
         dispatch(setAppStatusAC({ status: 'loading' }))
         try {
             await todosApi.deleteTasks(param)
+            dispatch(setAppStatusAC({ status: 'success' }))
             return { todoId: param.todoId, taskId: param.taskId }
         } catch (error) {
             dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
-        } finally {
-            dispatch(setAppStatusAC({ status: 'success' }))
+            dispatch(setAppStatusAC({ status: 'failed' }))
         }
     })
 
 export const updateTaskThunk = createAsyncThunk('tasks/updateTasks',
-    async (param: { todoId: string, taskId: string, model: Partial<UpdateTaskModelType> }, thunkApi) => {
-        const { dispatch, getState } = thunkApi
-
+    async (param: { todoId: string, taskId: string, model: Partial<UpdateTaskModelType> }, { dispatch, getState }) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const allTasks = getState().tasks
@@ -84,11 +77,12 @@ export const updateTaskThunk = createAsyncThunk('tasks/updateTasks',
 
         try {
             await todosApi.updateTask({ todoId: param.todoId, taskId: param.taskId, model: apiModel })
+            dispatch(setAppStatusAC({ status: 'success' }))
+
             return { todoId: param.todoId, taskId: param.taskId, model: apiModel }
         } catch (error) {
             dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
-        } finally {
-            dispatch(setAppStatusAC({ status: 'success' }))
+            dispatch(setAppStatusAC({ status: 'failed' }))
         }
     })
 
@@ -113,20 +107,24 @@ export const tasksSlice = createSlice({
             return {}
         })
         builder.addCase(fetchTasksThunk.fulfilled, (state, action) => {
-            state[action.payload!.todoId] = action.payload!.tasks
+            state[action.payload.todoId] = action.payload.tasks
         })
         builder.addCase(deleteTaskThunk.fulfilled, (state, action) => {
-            const tasks = state[action.payload!.todoId]
-            const index = tasks.findIndex(t => t.id === action.payload!.taskId)
-            if (index > -1) tasks.splice(index, 1)
+            if (action.payload) {
+                const tasks = state[action.payload.todoId]
+                const index = tasks.findIndex(t => t.id === action.payload!.taskId)
+                if (index > -1) tasks.splice(index, 1)
+            }
         })
         builder.addCase(updateTaskThunk.fulfilled, (state, action) => {
-            const tasks = state[action.payload!.todoId]
-            const index = tasks.findIndex(t => t.id === action.payload!.taskId)
-            if (index > -1) tasks[index] = { ...tasks[index], ...action.payload!.model }
+            if (action.payload) {
+                const tasks = state[action.payload.todoId]
+                const index = tasks.findIndex(t => t.id === action.payload!.taskId)
+                if (index > -1) tasks[index] = { ...tasks[index], ...action.payload.model }
+            }
         })
         builder.addCase(addTaskThunk.fulfilled, (state, action) => {
-            state[action.payload!.task.todoListId].unshift(action.payload!.task)
+            state[action.payload.task.todoListId].unshift(action.payload.task)
         })
 
     },

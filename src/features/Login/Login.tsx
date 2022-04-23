@@ -4,15 +4,20 @@ import FormLabel from '@mui/material/FormLabel'
 import TextField from '@mui/material/TextField'
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 import { Button } from '../../components'
-import { useFormik } from 'formik'
-import { useDispatch } from 'react-redux'
+import { FormikHelpers, useFormik } from 'formik'
 import { loginTC } from '../../store/reducers/login-reducer'
-import { useAppSelector } from '../../store/store'
+import { useAppDispatch, useAppSelector } from '../../store/store'
 import { Navigate } from 'react-router-dom'
 import { LoginParamsType } from '../../api/todos-api'
 
+type FormValuesType = {
+    email: string
+    password: string
+    rememberMe: boolean
+}
+
 export const Login = (): JSX.Element => {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const isLoggedIn = useAppSelector<boolean>(state => state.login.isLoggedIn)
     const formik = useFormik({
         initialValues: {
@@ -34,8 +39,11 @@ export const Login = (): JSX.Element => {
             }
             return errors
         },
-        onSubmit: values => {
-            dispatch(loginTC({ data: { ...values } }))
+        onSubmit: async (values, formikHelpers: FormikHelpers<FormValuesType>) => {
+            const res = await dispatch(loginTC({ data: { ...values } }))
+            if (res.type === loginTC.rejected.type) {
+                formikHelpers.setFieldError('email', 'Some error')
+            }
             formik.resetForm()
         },
     })

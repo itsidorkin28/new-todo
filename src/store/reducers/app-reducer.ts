@@ -1,7 +1,7 @@
-import { authApi, ResponseStatuses } from '../../api/todos-api'
+import { authApi, LoginParamsType, ResponseStatuses } from '../../api/todos-api'
 import { setIsLoggedInAC } from './login-reducer'
 import { AxiosError } from 'axios'
-import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
 
 export type RequestStatusType = 'idle' | 'loading' | 'success' | 'failed'
 
@@ -13,6 +13,16 @@ const initialState = {
     isInitialized: false as boolean,
 }
 
+export const initializeAppTC = createAsyncThunk('app/initializeApp',
+    async (param, { dispatch }) => {
+        dispatch(setAppStatusAC({ status: 'loading' }))
+        const res = await authApi.authMe()
+        if (res.data.resultCode === ResponseStatuses.Success) {
+            dispatch(setIsLoggedInAC({ value: true }))
+            dispatch(setAppStatusAC({ status: 'success' }))
+        }
+    })
+
 export const appSlice = createSlice({
     name: 'app',
     initialState,
@@ -23,30 +33,15 @@ export const appSlice = createSlice({
         setAppErrorAC(state, action: PayloadAction<{ error: NullableType<string> }>) {
             state.error = action.payload.error
         },
-        setAppIsInitializedAC(state, action: PayloadAction<{ value: boolean }>) {
-            state.isInitialized = action.payload.value
-        },
+    },
+    extraReducers: builder => {
+        builder.addCase(initializeAppTC.fulfilled, (state, action) => {
+            state.isInitialized = true
+        })
     },
 })
 
 export const appReducer = appSlice.reducer
-export const { setAppStatusAC, setAppErrorAC, setAppIsInitializedAC } = appSlice.actions
+export const { setAppStatusAC, setAppErrorAC } = appSlice.actions
 
-export const initializeAppTC = () => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC({ status: 'loading' }))
-    authApi.authMe()
-        .then(res => {
-            if (res.data.resultCode === ResponseStatuses.Success) {
-                dispatch(setIsLoggedInAC({ value: true }))
-            } else {
-                dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
-            }
-        })
-        .catch((error: AxiosError) => {
-            dispatch(setAppErrorAC({ error: error.message }))
-        })
-        .finally(() => {
-            dispatch(setAppStatusAC({ status: 'success' }))
-            dispatch(setAppIsInitializedAC({ value: true }))
-        })
-}
+
