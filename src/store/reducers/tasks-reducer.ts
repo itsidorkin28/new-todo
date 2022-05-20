@@ -2,13 +2,12 @@ import { ResponseStatuses, TaskType, todosApi, UpdateTaskModelType } from '../..
 import { setAppErrorAC, setAppStatusAC } from './app-reducer'
 import { AxiosError } from 'axios'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { addTodoAC, cleanUpTodosAndTasksAC, removeTodoAC, setTodosAC } from './todos-reducer'
+import { addTodoThunk, cleanUpTodosAndTasksAC, deleteTodoThunk, fetchTodosThunk } from './todos-reducer'
+import { RootStateType } from '../store'
 
 export interface TaskDomainType {
     [todoId: string]: Array<TaskType>
 }
-
-const initialState: TaskDomainType = {}
 
 export const fetchTasksThunk = createAsyncThunk('tasks/fetchTasks',
     async (param: { todoId: string }, { dispatch }) => {
@@ -34,13 +33,13 @@ export const addTaskThunk = createAsyncThunk('tasks/addTask',
         } catch (error) {
             dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
             dispatch(setAppStatusAC({ status: 'failed' }))
-            return rejectWithValue(null)
+            return rejectWithValue((error as AxiosError).message)
         }
     })
 
 
 export const deleteTaskThunk = createAsyncThunk('tasks/removeTasks',
-    async (param: { todoId: string, taskId: string }, { dispatch }) => {
+    async (param: { todoId: string, taskId: string }, { dispatch, rejectWithValue }) => {
         dispatch(setAppStatusAC({ status: 'loading' }))
         try {
             await todosApi.deleteTasks(param)
@@ -49,20 +48,23 @@ export const deleteTaskThunk = createAsyncThunk('tasks/removeTasks',
         } catch (error) {
             dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
             dispatch(setAppStatusAC({ status: 'failed' }))
+            return rejectWithValue((error as AxiosError).message)
         }
     })
 
 export const updateTaskThunk = createAsyncThunk('tasks/updateTasks',
-    async (param: { todoId: string, taskId: string, model: Partial<UpdateTaskModelType> }, { dispatch, getState }) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const allTasks = getState().tasks
+    async (param: { todoId: string, taskId: string, model: Partial<UpdateTaskModelType> }, {
+        dispatch,
+        getState,
+        rejectWithValue,
+    }) => {
+        const state = getState() as RootStateType
+        const allTasks = state.tasks as TaskDomainType
 
         const tasksOfCurrentTodo = allTasks[param.todoId]
-        const currentTask = tasksOfCurrentTodo.find((t: any) => t.id === param.taskId)
+        const currentTask = tasksOfCurrentTodo.find(t => t.id === param.taskId)
         if (!currentTask) {
-            console.warn('Task not found in the state')
-            return
+            return rejectWithValue('Task not found in the state')
         }
         const apiModel: UpdateTaskModelType = {
             title: currentTask.title,
@@ -83,24 +85,25 @@ export const updateTaskThunk = createAsyncThunk('tasks/updateTasks',
         } catch (error) {
             dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
             dispatch(setAppStatusAC({ status: 'failed' }))
+            return rejectWithValue((error as AxiosError).message)
         }
     })
 
 
 export const tasksSlice = createSlice({
     name: 'tasks',
-    initialState,
+    initialState: {} as TaskDomainType,
     reducers: {},
-    extraReducers: (builder) => {
-        builder.addCase(addTodoAC, (state, action) => {
+    extraReducers: builder => {
+        builder.addCase(addTodoThunk.fulfilled, (state, action) => {
             state[action.payload.todo.id] = []
         })
-        builder.addCase(setTodosAC, (state, action) => {
+        builder.addCase(fetchTodosThunk.fulfilled, (state, action) => {
             action.payload.todos.forEach(el => {
                 state[el.id] = []
             })
         })
-        builder.addCase(removeTodoAC, (state, action) => {
+        builder.addCase(deleteTodoThunk.fulfilled, (state, action) => {
             delete state[action.payload.todoId]
         })
         builder.addCase(cleanUpTodosAndTasksAC, () => {
@@ -112,14 +115,14 @@ export const tasksSlice = createSlice({
         builder.addCase(deleteTaskThunk.fulfilled, (state, action) => {
             if (action.payload) {
                 const tasks = state[action.payload.todoId]
-                const index = tasks.findIndex(t => t.id === action.payload!.taskId)
+                const index = tasks.findIndex(t => t.id === action.payload.taskId)
                 if (index > -1) tasks.splice(index, 1)
             }
         })
         builder.addCase(updateTaskThunk.fulfilled, (state, action) => {
             if (action.payload) {
                 const tasks = state[action.payload.todoId]
-                const index = tasks.findIndex(t => t.id === action.payload!.taskId)
+                const index = tasks.findIndex(t => t.id === action.payload.taskId)
                 if (index > -1) tasks[index] = { ...tasks[index], ...action.payload.model }
             }
         })

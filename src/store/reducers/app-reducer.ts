@@ -1,7 +1,6 @@
-import { authApi, LoginParamsType, ResponseStatuses } from '../../api/todos-api'
+import { authApi, ResponseStatuses } from '../../api/todos-api'
 import { setIsLoggedInAC } from './login-reducer'
-import { AxiosError } from 'axios'
-import { createAsyncThunk, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export type RequestStatusType = 'idle' | 'loading' | 'success' | 'failed'
 
@@ -37,6 +36,7 @@ export const appSlice = createSlice({
     extraReducers: builder => {
         builder.addCase(initializeAppTC.fulfilled, (state, action) => {
             state.isInitialized = true
+            state.status = 'success'
         })
     },
 })
