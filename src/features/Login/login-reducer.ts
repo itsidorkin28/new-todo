@@ -1,12 +1,8 @@
-import { setAppErrorAC, setAppStatusAC } from './app-reducer'
+import { setAppErrorAC, setAppStatusAC } from '../../app/app-reducer'
 import { authApi, LoginParamsType, ResponseStatuses } from '../../api/todos-api'
 import { AxiosError } from 'axios'
-import { cleanUpTodosAndTasksAC } from './todos-reducer'
+import { cleanUpTodosAndTasks } from '../Todos/todos-reducer'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-const initialState = {
-    isLoggedIn: false as boolean,
-}
 
 export const loginTC = createAsyncThunk<undefined, { data: LoginParamsType }>('login/login',
     async (param: { data: LoginParamsType }, { dispatch, rejectWithValue }) => {
@@ -33,7 +29,7 @@ export const logoutTC = createAsyncThunk('login/logout',
         try {
             const res = await authApi.logout()
             if (res.data.resultCode === ResponseStatuses.Success) {
-                dispatch(cleanUpTodosAndTasksAC())
+                dispatch(cleanUpTodosAndTasks())
                 dispatch(setAppStatusAC({ status: 'success' }))
             } else {
                 dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
@@ -51,7 +47,9 @@ export const logoutTC = createAsyncThunk('login/logout',
 
 export const loginSlice = createSlice({
     name: 'login',
-    initialState,
+    initialState: {
+        isLoggedIn: false as boolean,
+    },
     reducers: {
         setIsLoggedInAC(state, action: PayloadAction<{ value: boolean }>) {
             state.isLoggedIn = action.payload.value

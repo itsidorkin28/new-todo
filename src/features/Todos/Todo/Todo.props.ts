@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import { TaskStatuses, TaskType } from '../../api/todos-api'
-import { RequestStatusType } from '../../store/reducers/app-reducer'
-import { FilterType } from '../../store/reducers/todos-reducer'
+import { TaskStatuses, TaskType } from '../../../api/todos-api'
+import { RequestStatusType } from '../../../app/app-reducer'
+import { FilterType } from '../todos-reducer'
 
 export interface TodoProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     todoId: string

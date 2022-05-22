@@ -1,57 +1,57 @@
 import React, { useCallback, useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '../../store/store'
+import { useActions, useAppSelector } from '../../store/store'
 import {
     FilterType,
     TodoDomainType,
-    setTodoFilterAC, fetchTodosThunk, addTodoThunk, deleteTodoThunk, updateTodoTitleThunk,
-} from '../../store/reducers/todos-reducer'
+} from './todos-reducer'
 import {
-    addTaskThunk, deleteTaskThunk, TaskDomainType, updateTaskThunk,
-} from '../../store/reducers/tasks-reducer'
+    TaskDomainType,
+} from './Todo/Task/tasks-reducer'
 import { AddForm, Title } from '../../components'
-import { Todo } from '../Todo/Todo'
+import { Todo } from './Todo/Todo'
 import { TaskStatuses } from '../../api/todos-api'
 import styles from './Todos.module.scss'
 import { Navigate } from 'react-router-dom'
+import { tasksActions, todosActions } from '.'
 
 export const Todos = (): JSX.Element => {
-    const dispatch = useAppDispatch()
     const todos = useAppSelector<Array<TodoDomainType>>(state => state.todos)
     const tasks = useAppSelector<TaskDomainType>(state => state.tasks)
     const isLoggedIn = useAppSelector<boolean>(state => state.login.isLoggedIn)
-
+    const {deleteTask, updateTask, createTask} = useActions(tasksActions)
+    const {deleteTodo, updateTodoTitle, createTodo, fetchTodos, setTodoFilter} = useActions(todosActions)
     useEffect(() => {
         if (!isLoggedIn) {
             return
         }
-        dispatch(fetchTodosThunk())
-    }, [dispatch, isLoggedIn])
+        fetchTodos()
+    }, [fetchTodos, isLoggedIn])
 
     const changeTaskStatus = useCallback((todoId: string, taskId: string, status: TaskStatuses) => {
-        dispatch(updateTaskThunk({ todoId, taskId, model: { status } }))
-    }, [dispatch])
+       updateTask({ todoId, taskId, model: { status } })
+    }, [updateTask])
     const changeTaskTitle = useCallback((todoId: string, taskId: string, title: string) => {
-        dispatch(updateTaskThunk({ todoId, taskId, model: { title } }))
-    }, [dispatch])
+       updateTask({ todoId, taskId, model: { title } })
+    }, [updateTask])
     const removeTask = useCallback((todoId: string, taskId: string) => {
-        dispatch(deleteTaskThunk({ todoId, taskId }))
-    }, [dispatch])
+        deleteTask({ todoId, taskId })
+    }, [deleteTask])
     const addTask = useCallback((todoId: string, title: string) => {
-        dispatch(addTaskThunk({ todoId, title }))
-    }, [dispatch])
+        createTask({ todoId, title })
+    }, [createTask])
 
     const changeTodoTitle = useCallback((todoId: string, title: string) => {
-        dispatch(updateTodoTitleThunk({ todoId, title }))
-    }, [dispatch])
+        updateTodoTitle({ todoId, title })
+    }, [updateTodoTitle])
     const removeTodo = useCallback((todoId: string) => {
-        dispatch(deleteTodoThunk({ todoId }))
-    }, [dispatch])
-    const setTodoFilter = useCallback((todoId: string, filter: FilterType) => {
-        dispatch(setTodoFilterAC({ todoId, filter }))
-    }, [dispatch])
+        deleteTodo({ todoId })
+    }, [deleteTodo])
+    const setTodoFilterCallback = useCallback((todoId: string, filter: FilterType) => {
+        setTodoFilter({ todoId, filter })
+    }, [setTodoFilter])
     const addTodo = useCallback((title: string) => {
-        dispatch(addTodoThunk({ title }))
-    }, [dispatch])
+        createTodo({ title })
+    }, [createTodo])
 
     if (!isLoggedIn) {
         return <Navigate to='/login' />
@@ -67,7 +67,7 @@ export const Todos = (): JSX.Element => {
                 let tasksList
                 switch (el.filter) {
                     case 'active':
-                        tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.InProgress)
+                        tasksList = tasks[el.id].filter(el => el.status !== TaskStatuses.Completed)
                         break
                     case 'completed':
                         tasksList = tasks[el.id].filter(el => el.status === TaskStatuses.Completed)
@@ -86,7 +86,7 @@ export const Todos = (): JSX.Element => {
                         addTask={addTask}
                         changeTaskTitle={changeTaskTitle}
                         changeTodoTitle={changeTodoTitle}
-                        setTodoFilter={setTodoFilter}
+                        setTodoFilter={setTodoFilterCallback}
                         filter={el.filter}
                         entityStatus={el.entityStatus}
                         changeTaskStatus={changeTaskStatus}

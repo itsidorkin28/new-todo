@@ -1,5 +1,5 @@
-import { authApi, ResponseStatuses } from '../../api/todos-api'
-import { setIsLoggedInAC } from './login-reducer'
+import { authApi, ResponseStatuses } from '../api/todos-api'
+import { setIsLoggedInAC } from '../features/Login/login-reducer'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export type RequestStatusType = 'idle' | 'loading' | 'success' | 'failed'

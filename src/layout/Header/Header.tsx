@@ -5,7 +5,7 @@ import styles from './Header.module.scss'
 import { Button, Title } from '../../components'
 import { useAppSelector } from '../../store/store'
 import { useDispatch } from 'react-redux'
-import { logoutTC } from '../../store/reducers/login-reducer'
+import { logoutTC } from '../../features/Login/login-reducer'
 
 export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
     const dispatch = useDispatch()

@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect } from 'react'
-import { AddForm, Button, EditableSpan, Title } from '../../components'
+import { AddForm, Button, EditableSpan, Title } from '../../../components'
 import { TodoProps } from './Todo.props'
 import styles from './Todo.module.scss'
 import cn from 'classnames'
-import { Task } from '../Task/Task'
-import { FilterType } from '../../store/reducers/todos-reducer'
-import { deleteTaskThunk, fetchTasksThunk } from '../../store/reducers/tasks-reducer'
-import { TaskStatuses } from '../../api/todos-api'
+import { Task } from './Task/Task'
+import { FilterType } from '../todos-reducer'
+import { TaskStatuses } from '../../../api/todos-api'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import { useAppDispatch } from '../../store/store'
+import { useActions } from '../../../store/store'
+import { tasksActions } from '../index'
 
 export const Todo = React.memo(({
                                     todoId,
@@ -26,10 +26,10 @@ export const Todo = React.memo(({
                                     changeTaskTitle,
                                     ...props
                                 }: TodoProps): JSX.Element => {
-    const dispatch = useAppDispatch()
+    const {fetchTasks, deleteTask} = useActions(tasksActions)
     useEffect(() => {
-        dispatch(fetchTasksThunk({ todoId }))
-    }, [dispatch, todoId])
+        fetchTasks({ todoId })
+    }, [fetchTasks, todoId])
     const onChangeCheckboxHandle = useCallback((taskId: string, status: TaskStatuses) => {
         changeTaskStatus(todoId, taskId, status)
     }, [changeTaskStatus, todoId])
@@ -37,8 +37,8 @@ export const Todo = React.memo(({
         changeTaskTitle(todoId, taskId, title)
     }, [changeTaskTitle, todoId])
     const removeTaskHandle = useCallback((taskId: string) => {
-        dispatch(deleteTaskThunk({ todoId, taskId }))
-    }, [dispatch, todoId])
+        deleteTask({ todoId, taskId })
+    }, [deleteTask, todoId])
     const tasksListJSX = tasksList.map(el => {
         return <Task key={el.id}
                      task={el} removeTask={removeTaskHandle}

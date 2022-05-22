@@ -3,16 +3,17 @@ import { Login, NotFound, Todos } from '../features'
 import { withLayout } from '../layout'
 import LinearProgress from '@mui/material/LinearProgress'
 import { useAppSelector } from '../store/store'
-import { initializeAppTC, RequestStatusType } from '../store/reducers/app-reducer'
+import { initializeAppTC, RequestStatusType } from './app-reducer'
 import ErrorSnackBar from '../components/ErroSnackBar/ErrorSnackBar'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import CircularProgress from '@mui/material/CircularProgress'
+import { selectIsInitialized, selectStatus } from './selectors'
 
 function App() {
     const dispatch = useDispatch()
-    const status = useAppSelector<RequestStatusType>(state => state.app.status)
-    const isInitialized = useAppSelector<boolean>(state => state.app.isInitialized)
+    const status = useAppSelector<RequestStatusType>(selectStatus)
+    const isInitialized = useAppSelector<boolean>(selectIsInitialized)
     useEffect(() => {
         dispatch(initializeAppTC())
     }, [dispatch])
