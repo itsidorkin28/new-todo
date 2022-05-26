@@ -6,25 +6,31 @@ import { Button, EditableSpan } from '../../../../components'
 import { TaskStatuses } from '../../../../api/todos-api'
 import Checkbox from '@mui/material/Checkbox/Checkbox'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import { useActions } from '../../../../store/store'
+import { tasksActions } from '../../index'
 
 export const Task = React.memo(({
                                     task,
-                                    removeTask,
-                                    changeTaskTitle,
-                                    onChangeCheckbox,
+                                    todoId,
                                     ...props
                                 }: TaskProps): JSX.Element => {
     const { id, title, status } = task
+    const { deleteTask, updateTask } = useActions(tasksActions)
+
     const onChangeCheckboxHandle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const newIsDoneValue = e.currentTarget.checked
-        onChangeCheckbox(id, newIsDoneValue ? TaskStatuses.Completed : TaskStatuses.InProgress)
-    }, [onChangeCheckbox, id])
+        updateTask({
+            todoId,
+            taskId: id,
+            model: { status: newIsDoneValue ? TaskStatuses.Completed : TaskStatuses.InProgress },
+        })
+    }, [updateTask, id, todoId])
     const changeTaskTitleHandle = useCallback((title: string) => {
-        changeTaskTitle(id, title)
-    }, [changeTaskTitle, id])
+        updateTask({ todoId, taskId: id, model: { title } })
+    }, [updateTask, id, todoId])
     const removeTaskHandle = useCallback(() => {
-        removeTask(id)
-    }, [removeTask, id])
+        deleteTask({ todoId, taskId: id })
+    }, [deleteTask, id, todoId])
     return <div {...props}>
         <li
             className={cn({

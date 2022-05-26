@@ -1,5 +1,5 @@
 import { authApi, ResponseStatuses } from '../api/todos-api'
-import { setIsLoggedInAC } from '../features/Login/login-reducer'
+import { setIsLoggedIn } from '../features/Login/login-reducer'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export type RequestStatusType = 'idle' | 'loading' | 'success' | 'failed'
@@ -17,7 +17,7 @@ const initializeApp = createAsyncThunk('app/initializeApp',
         dispatch(setAppStatus({ status: 'loading' }))
         const res = await authApi.authMe()
         if (res.data.resultCode === ResponseStatuses.Success) {
-            dispatch(setIsLoggedInAC({ value: true }))
+            dispatch(setIsLoggedIn({ value: true }))
             dispatch(setAppStatus({ status: 'success' }))
         }
     })
@@ -36,7 +36,7 @@ export const appSlice = createSlice({
         },
     },
     extraReducers: builder => {
-        builder.addCase(initializeApp.fulfilled, (state, action) => {
+        builder.addCase(initializeApp.fulfilled, (state) => {
             state.isInitialized = true
             state.status = 'success'
         })

@@ -5,13 +5,13 @@ import styles from './Header.module.scss'
 import { Button, Title } from '../../components'
 import { useAppSelector } from '../../store/store'
 import { useDispatch } from 'react-redux'
-import { logoutTC } from '../../features/Login/login-reducer'
+import { logout } from '../../features/Login/login-reducer'
 
 export const Header = ({ className, ...props }: HeaderProps): JSX.Element => {
     const dispatch = useDispatch()
     const isLoggedIn = useAppSelector<boolean>(state => state.login.isLoggedIn)
     const logoutHandle = () => {
-        dispatch(logoutTC())
+        dispatch(logout())
     }
     return <div className={cn(className, styles.header)} {...props}>
         <div className={styles.title}>

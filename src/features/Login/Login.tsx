@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField'
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 import { Button } from '../../components'
 import { FormikHelpers, useFormik } from 'formik'
-import { loginTC } from './login-reducer'
+import { login } from './login-reducer'
 import { useAppDispatch, useAppSelector } from '../../store/store'
 import { Navigate } from 'react-router-dom'
 import { LoginParamsType } from '../../api/todos-api'
@@ -40,8 +40,8 @@ export const Login = (): JSX.Element => {
             return errors
         },
         onSubmit: async (values, formikHelpers: FormikHelpers<FormValuesType>) => {
-            const res = await dispatch(loginTC({ data: { ...values } }))
-            if (res.type === loginTC.rejected.type) {
+            const res = await dispatch(login({ data: { ...values } }))
+            if (res.type === login.rejected.type) {
                 formikHelpers.setFieldError('email', 'Some error')
             }
             formik.resetForm()

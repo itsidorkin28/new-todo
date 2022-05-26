@@ -5,7 +5,6 @@ import styles from './Todo.module.scss'
 import cn from 'classnames'
 import { Task } from './Task/Task'
 import { FilterType } from '../todos-reducer'
-import { TaskStatuses } from '../../../api/todos-api'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import { useActions } from '../../../store/store'
 import { tasksActions, todosActions } from '../index'
@@ -19,25 +18,16 @@ export const Todo = React.memo(({
                                     entityStatus,
                                     ...props
                                 }: TodoProps): JSX.Element => {
-    const { fetchTasks, deleteTask, createTask, updateTask } = useActions(tasksActions)
+    const { fetchTasks, createTask } = useActions(tasksActions)
     const { deleteTodo, updateTodoTitle, setTodoFilter } = useActions(todosActions)
     useEffect(() => {
         fetchTasks({ todoId })
     }, [fetchTasks, todoId])
-    const onChangeCheckboxHandle = useCallback((taskId: string, status: TaskStatuses) => {
-        updateTask({ todoId, taskId, model: { status } })
-    }, [updateTask, todoId])
-    const changeTaskTitleHandle = useCallback((taskId: string, title: string) => {
-        updateTask({ todoId, taskId, model: { title } })
-    }, [updateTask, todoId])
-    const removeTaskHandle = useCallback((taskId: string) => {
-        deleteTask({ todoId, taskId })
-    }, [deleteTask, todoId])
+
     const tasksListJSX = tasksList.map(el => {
         return <Task key={el.id}
-                     task={el} removeTask={removeTaskHandle}
-                     changeTaskTitle={changeTaskTitleHandle}
-                     onChangeCheckbox={onChangeCheckboxHandle} />
+                     task={el}
+                     todoId={todoId} />
 
     })
 

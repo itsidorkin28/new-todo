@@ -5,7 +5,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { setAppError, setAppStatus } from '../../app/app-reducer'
 
 
-export const loginTC = createAsyncThunk<undefined, { data: LoginParamsType }>('login/login',
+export const login = createAsyncThunk<undefined, { data: LoginParamsType }>('login/login',
     async (param: { data: LoginParamsType }, { dispatch, rejectWithValue }) => {
         dispatch(setAppStatus({ status: 'loading' }))
         try {
@@ -24,7 +24,7 @@ export const loginTC = createAsyncThunk<undefined, { data: LoginParamsType }>('l
         }
     })
 
-export const logoutTC = createAsyncThunk('login/logout',
+export const logout = createAsyncThunk('login/logout',
     async (param, { dispatch, rejectWithValue }) => {
         dispatch(setAppStatus({ status: 'loading' }))
         try {
@@ -45,29 +45,31 @@ export const logoutTC = createAsyncThunk('login/logout',
 
     })
 
-
+export const asyncActions = {
+    login, logout
+}
 export const loginSlice = createSlice({
     name: 'login',
     initialState: {
         isLoggedIn: false as boolean,
     },
     reducers: {
-        setIsLoggedInAC(state, action: PayloadAction<{ value: boolean }>) {
+        setIsLoggedIn(state, action: PayloadAction<{ value: boolean }>) {
             state.isLoggedIn = action.payload.value
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(loginTC.fulfilled, (state, action) => {
+        builder.addCase(login.fulfilled, (state) => {
             state.isLoggedIn = true
         })
-        builder.addCase(logoutTC.fulfilled, (state, action) => {
+        builder.addCase(logout.fulfilled, (state) => {
             state.isLoggedIn = false
         })
     },
 })
 
 export const loginReducer = loginSlice.reducer
-export const { setIsLoggedInAC } = loginSlice.actions
+export const { setIsLoggedIn } = loginSlice.actions
 
 
 
