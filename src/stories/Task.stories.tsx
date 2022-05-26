@@ -1,17 +1,11 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
-import { action } from '@storybook/addon-actions'
 import { Task } from '../features/Todos/Todo/Task/Task'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
     title: 'Todos/Task',
     component: Task,
-    args: {
-        removeTask: action('removeTask'),
-        changeTaskTitle: action('changeTaskTitle'),
-        onChangeCheckbox: action('onChangeCheckbox'),
-    }
     // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 } as ComponentMeta<typeof Task>
 

@@ -1,6 +1,6 @@
 .wrapper {
 	display: grid;
-	grid-template-columns: auto minmax(320px, 1200px) auto;
+	grid-template-columns: 1fr;
 	grid-template-rows: auto 1fr auto;
 
 	min-height: 100vh;
@@ -15,6 +15,8 @@
 	}
 
 	.body {
+		display: flex;
+		overflow: auto;
 		grid-area: body;
 	}
 

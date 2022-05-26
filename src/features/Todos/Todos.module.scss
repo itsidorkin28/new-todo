@@ -1,7 +1,8 @@
 .todos {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	grid-gap: 15px;
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
 
 	margin-top: 15px;
 }

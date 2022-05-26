@@ -34,10 +34,12 @@ export const Todos = (): JSX.Element => {
     }
 
     return <div>
-        <Title tag={'h2'}>
-            Add todo
-        </Title>
-        <AddForm onCreate={addTodo} />
+        <div style={{marginLeft: '5px'}}>
+            <Title tag={'h2'}>
+                Add todolist
+            </Title>
+            <AddForm onCreate={addTodo}/>
+        </div>
         <div className={styles.todos}>
             {todos.map(el => {
                 let tasksList
