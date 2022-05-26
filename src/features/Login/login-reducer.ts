@@ -45,9 +45,6 @@ export const logout = createAsyncThunk('login/logout',
 
     })
 
-export const asyncActions = {
-    login, logout
-}
 export const loginSlice = createSlice({
     name: 'login',
     initialState: {
