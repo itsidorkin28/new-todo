@@ -1,44 +1,45 @@
-import { setAppErrorAC, setAppStatusAC } from '../../app/app-reducer'
 import { authApi, LoginParamsType, ResponseStatuses } from '../../api/todos-api'
 import { AxiosError } from 'axios'
 import { cleanUpTodosAndTasks } from '../Todos/todos-reducer'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { setAppError, setAppStatus } from '../../app/app-reducer'
+
 
 export const loginTC = createAsyncThunk<undefined, { data: LoginParamsType }>('login/login',
     async (param: { data: LoginParamsType }, { dispatch, rejectWithValue }) => {
-        dispatch(setAppStatusAC({ status: 'loading' }))
+        dispatch(setAppStatus({ status: 'loading' }))
         try {
             const res = await authApi.login(param)
             if (res.data.resultCode === ResponseStatuses.Success) {
-                dispatch(setAppStatusAC({ status: 'success' }))
+                dispatch(setAppStatus({ status: 'success' }))
             } else {
-                dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
-                dispatch(setAppStatusAC({ status: 'failed' }))
+                dispatch(setAppError({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
+                dispatch(setAppStatus({ status: 'failed' }))
                 return rejectWithValue({ errors: res.data.messages, fieldsErrors: res.data.fieldsErrors })
             }
         } catch (error) {
-            dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+            dispatch(setAppError({ error: (error as AxiosError).message }))
+            dispatch(setAppStatus({ status: 'failed' }))
             return rejectWithValue({ errors: (error as AxiosError).message, fieldsErrors: undefined })
         }
     })
 
 export const logoutTC = createAsyncThunk('login/logout',
     async (param, { dispatch, rejectWithValue }) => {
-        dispatch(setAppStatusAC({ status: 'loading' }))
+        dispatch(setAppStatus({ status: 'loading' }))
         try {
             const res = await authApi.logout()
             if (res.data.resultCode === ResponseStatuses.Success) {
                 dispatch(cleanUpTodosAndTasks())
-                dispatch(setAppStatusAC({ status: 'success' }))
+                dispatch(setAppStatus({ status: 'success' }))
             } else {
-                dispatch(setAppErrorAC({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
-                dispatch(setAppStatusAC({ status: 'failed' }))
+                dispatch(setAppError({ error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred' }))
+                dispatch(setAppStatus({ status: 'failed' }))
                 return rejectWithValue({})
             }
         } catch (error) {
-            dispatch(setAppErrorAC({ error: (error as AxiosError).message }))
-            dispatch(setAppStatusAC({ status: 'failed' }))
+            dispatch(setAppError({ error: (error as AxiosError).message }))
+            dispatch(setAppStatus({ status: 'failed' }))
             return rejectWithValue({})
         }
 

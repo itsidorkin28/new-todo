@@ -8,34 +8,28 @@ import { FilterType } from '../todos-reducer'
 import { TaskStatuses } from '../../../api/todos-api'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import { useActions } from '../../../store/store'
-import { tasksActions } from '../index'
+import { tasksActions, todosActions } from '../index'
 
 export const Todo = React.memo(({
                                     todoId,
                                     title,
                                     tasksList,
                                     className,
-                                    setTodoFilter,
-                                    removeTask,
-                                    removeTodo,
-                                    addTask,
                                     filter,
                                     entityStatus,
-                                    changeTaskStatus,
-                                    changeTodoTitle,
-                                    changeTaskTitle,
                                     ...props
                                 }: TodoProps): JSX.Element => {
-    const {fetchTasks, deleteTask} = useActions(tasksActions)
+    const { fetchTasks, deleteTask, createTask, updateTask } = useActions(tasksActions)
+    const { deleteTodo, updateTodoTitle, setTodoFilter } = useActions(todosActions)
     useEffect(() => {
         fetchTasks({ todoId })
     }, [fetchTasks, todoId])
     const onChangeCheckboxHandle = useCallback((taskId: string, status: TaskStatuses) => {
-        changeTaskStatus(todoId, taskId, status)
-    }, [changeTaskStatus, todoId])
+        updateTask({ todoId, taskId, model: { status } })
+    }, [updateTask, todoId])
     const changeTaskTitleHandle = useCallback((taskId: string, title: string) => {
-        changeTaskTitle(todoId, taskId, title)
-    }, [changeTaskTitle, todoId])
+        updateTask({ todoId, taskId, model: { title } })
+    }, [updateTask, todoId])
     const removeTaskHandle = useCallback((taskId: string) => {
         deleteTask({ todoId, taskId })
     }, [deleteTask, todoId])
@@ -47,18 +41,18 @@ export const Todo = React.memo(({
 
     })
 
-    const createTask = useCallback((title: string) => {
-        addTask(todoId, title)
-    }, [addTask, todoId])
+    const addTask = useCallback((title: string) => {
+        createTask({ todoId, title })
+    }, [createTask, todoId])
     const changeTodoTitleHandle = useCallback((title: string) => {
-        changeTodoTitle(todoId, title)
-    }, [changeTodoTitle, todoId])
+        updateTodoTitle({ todoId, title })
+    }, [updateTodoTitle, todoId])
     const setTodoFilterHandle = useCallback((filter: FilterType) => {
-        setTodoFilter(todoId, filter)
+        setTodoFilter({ todoId, filter })
     }, [setTodoFilter, todoId])
     const removeTodoHandle = useCallback(() => {
-        removeTodo(todoId)
-    }, [removeTodo, todoId])
+        deleteTodo({ todoId })
+    }, [deleteTodo, todoId])
     return <div className={cn(styles.todo, className)} {...props}>
         <Button appearance={'ghost'} onClick={removeTodoHandle} round={true} disabled={entityStatus === 'loading'}>
             <DeleteForeverIcon fontSize={'small'} />
@@ -66,7 +60,7 @@ export const Todo = React.memo(({
         <Title tag={'h3'}>
             <EditableSpan title={title} changeTitle={changeTodoTitleHandle} />
         </Title>
-        <AddForm onCreate={createTask} disabled={entityStatus === 'loading'}/>
+        <AddForm onCreate={addTask} disabled={entityStatus === 'loading'} />
         <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
             {tasksListJSX}
         </ul>

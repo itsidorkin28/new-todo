@@ -3,7 +3,7 @@ import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import { useAppSelector } from '../../store/store'
 import { useDispatch } from 'react-redux'
-import { NullableType, setAppErrorAC } from '../../app/app-reducer'
+import { NullableType, setAppError } from '../../app/app-reducer'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -20,7 +20,7 @@ export default function ErrorSnackBar() {
         if (reason === 'clickaway') {
             return
         }
-        dispatch(setAppErrorAC({error: null}))
+        dispatch(setAppError({error: null}))
     }
 
     return (

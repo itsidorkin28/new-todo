@@ -1,6 +1,8 @@
-import { TaskDomainType, tasksReducer } from '../src/features/Todos/Todo/Task/tasks-reducer'
-import { TodoDomainType, todosReducer } from '../src/features/Todos/todos-reducer'
-import { addTodo } from '../src/features/Todos/todos-actions'
+import { TaskDomainType, tasksReducer } from '../features/Todos/Todo/Task/tasks-reducer'
+import { TodoDomainType, todosReducer } from '../features/Todos/todos-reducer'
+import { todosActions } from '../features/Todos'
+
+const {createTodo} = todosActions
 
 test('ids should be equals', () => {
     const startTasksState: TaskDomainType = {}
@@ -13,7 +15,7 @@ test('ids should be equals', () => {
             order: 0
         }
     }
-    const action = addTodo.fulfilled(payload, 'requestId', { title: payload.todo.title })
+    const action = createTodo.fulfilled(payload, 'requestId', { title: payload.todo.title })
 
     const endTasksState = tasksReducer(startTasksState, action)
     const endTodosState = todosReducer(startTodosState, action)

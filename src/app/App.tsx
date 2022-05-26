@@ -2,21 +2,21 @@ import React, { useEffect } from 'react'
 import { Login, NotFound, Todos } from '../features'
 import { withLayout } from '../layout'
 import LinearProgress from '@mui/material/LinearProgress'
-import { useAppSelector } from '../store/store'
-import { initializeAppTC, RequestStatusType } from './app-reducer'
+import { useActions, useAppSelector } from '../store/store'
+import { RequestStatusType } from './app-reducer'
 import ErrorSnackBar from '../components/ErroSnackBar/ErrorSnackBar'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import CircularProgress from '@mui/material/CircularProgress'
 import { selectIsInitialized, selectStatus } from './selectors'
+import { asyncActions } from './app-reducer'
 
 function App() {
-    const dispatch = useDispatch()
     const status = useAppSelector<RequestStatusType>(selectStatus)
     const isInitialized = useAppSelector<boolean>(selectIsInitialized)
+    const {initializeApp} = useActions(asyncActions)
     useEffect(() => {
-        dispatch(initializeAppTC())
-    }, [dispatch])
+        initializeApp()
+    }, [initializeApp])
 
     if (!isInitialized) {
         return <CircularProgress
